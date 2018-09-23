@@ -5,12 +5,13 @@
 
 using System;
 using System.Collections.Generic;
+using READ_ONLY_CHARS = System.ReadOnlySpan<char>;
 
 namespace Typography.TextBreak
 {
     public abstract class BreakingEngine
     {
-        internal abstract WordVisitor BreakWord(WordVisitor visitor, ReadOnlySpan<char> charBuff);
+        internal abstract WordVisitor BreakWord(WordVisitor visitor, READ_ONLY_CHARS charBuff);
         public abstract bool CanBeStartChar(char c);
         public abstract bool CanHandle(char c);
     }
@@ -28,7 +29,7 @@ namespace Typography.TextBreak
         public bool BreakPeroidInTextSpan { get; set; }
 
         public bool DontMergeLastIncompleteWord { get; set; }
-        internal override WordVisitor BreakWord(WordVisitor visitor, ReadOnlySpan<char> charBuff)
+        internal override WordVisitor BreakWord(WordVisitor visitor, READ_ONLY_CHARS charBuff)
         {
             visitor.State = VisitorState.Parsing;
 

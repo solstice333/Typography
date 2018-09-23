@@ -1,5 +1,6 @@
 ﻿//MIT, 2014-present, WinterDev
 using System.Collections.Generic;
+using READ_ONLY_CHARS = System.ReadOnlySpan<char>;
 
 namespace Typography.TextLayout
 {
@@ -47,7 +48,7 @@ namespace Typography.TextLayout
 
         bool _contentChanged = true;
 
-        public System.ReadOnlySpan<char> Characters => new System.ReadOnlySpan<char>(_charBuffer, 0, _count);
+        public READ_ONLY_CHARS Characters => new READ_ONLY_CHARS(_charBuffer, 0, _count);
 
         /// <summary>
         /// add char at current pos

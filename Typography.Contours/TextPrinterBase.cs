@@ -1,7 +1,11 @@
 ﻿//MIT, 2016-present, WinterDev
+
 using System.Collections.Generic;
 using Typography.OpenFont;
 using Typography.TextLayout;
+
+using READ_ONLY_CHARS = System.ReadOnlySpan<char>;
+
 
 namespace Typography.Contours
 {
@@ -21,7 +25,7 @@ namespace Typography.Contours
         public abstract Typography.OpenFont.Typeface Typeface { get; set; }
 
         public virtual void GenerateGlyphPlan(
-                  System.ReadOnlySpan<char> textBuffer,
+                  READ_ONLY_CHARS textBuffer,
                   IUnscaledGlyphPlanList unscaledGlyphPlan)
         {
             GlyphLayout glyphLayout = this.GlyphLayoutMan;
@@ -73,7 +77,7 @@ namespace Typography.Contours
         /// <param name="len"></param>
         /// <param name="x"></param>
         /// <param name="y"></param>
-        public abstract void DrawString(System.ReadOnlySpan<char> textBuffer, float x, float y);
+        public abstract void DrawString(READ_ONLY_CHARS textBuffer, float x, float y);
         /// <summary>
         /// draw glyph plan list at (xpos,ypos) of baseline
         /// </summary>

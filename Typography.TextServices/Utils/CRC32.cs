@@ -28,6 +28,8 @@
 //from Ionic.Crc
 
 using System;
+using READ_ONLY_CHARS = System.ReadOnlySpan<char>;
+
 namespace Typography.TextServices
 {
     /// <summary>
@@ -53,7 +55,7 @@ namespace Typography.TextServices
         /// <param name="startAt"></param>
         /// <param name="len"></param>
         /// <returns></returns>
-        public static int CalculateCRC32(ReadOnlySpan<char> charBuffer)
+        public static int CalculateCRC32(READ_ONLY_CHARS charBuffer)
         {
             //calculate CRC32 
             uint register = SlurpBlock2_(charBuffer);
@@ -66,13 +68,13 @@ namespace Typography.TextServices
         /// <param name="startAt"></param>
         /// <param name="len"></param>
         /// <returns></returns>
-        public static int CalculateCRC32_ReverseBit(ReadOnlySpan<char> charBuffer)
+        public static int CalculateCRC32_ReverseBit(READ_ONLY_CHARS charBuffer)
         {
             //calculate CRC32
             uint register = SlurpBlock2_ReverseBits(charBuffer);
             return (Int32)(~register);
         }
-        static uint SlurpBlock2_(ReadOnlySpan<char> block)
+        static uint SlurpBlock2_(READ_ONLY_CHARS block)
         {
             uint _register = RESET_REGISTER;
             // bzip algorithm
@@ -92,7 +94,7 @@ namespace Typography.TextServices
             }
             return _register;
         }
-        static uint SlurpBlock2_ReverseBits(ReadOnlySpan<char> block)
+        static uint SlurpBlock2_ReverseBits(READ_ONLY_CHARS block)
         {
             uint _register = RESET_REGISTER;
             // bzip algorithm

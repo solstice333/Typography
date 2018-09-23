@@ -3,6 +3,7 @@
 // © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html#License
 
+using READ_ONLY_CHARS = System.ReadOnlySpan<char>;
 namespace Typography.TextBreak
 {
     public class KhmerDictionaryBreakingEngine : DictionaryBreakingEngine
@@ -23,7 +24,7 @@ namespace Typography.TextBreak
             throw new System.NotImplementedException();
         }
 
-        internal override WordVisitor BreakWord(WordVisitor visitor, System.ReadOnlySpan<char> charBuff)
+        internal override WordVisitor BreakWord(WordVisitor visitor, READ_ONLY_CHARS charBuff)
         {
             throw new System.NotImplementedException();
         }

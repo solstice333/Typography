@@ -11,6 +11,8 @@ using Typography.TextLayout;
 using Typography.TextServices;
 using Typography.FontManagement;
 
+using READ_ONLY_CHARS = System.ReadOnlySpan<char>;
+
 namespace LayoutFarm
 {
 
@@ -88,12 +90,12 @@ namespace LayoutFarm
             get { return _txtServices.CurrentScriptLang; }
         }
 
-        public void CalculateUserCharGlyphAdvancePos(ReadOnlySpan<char> textBufferSpan, RequestFont font, int[] outputGlyphAdvances, out int outputTotalW, out int outputLineHeight)
+        public void CalculateUserCharGlyphAdvancePos(READ_ONLY_CHARS textBufferSpan, RequestFont font, int[] outputGlyphAdvances, out int outputTotalW, out int outputLineHeight)
         {
             CalculateUserCharGlyphAdvancePos(textBufferSpan, this.BreakToLineSegments(textBufferSpan), font, outputGlyphAdvances, out outputTotalW, out outputLineHeight);
         }
 
-        public void CalculateUserCharGlyphAdvancePos(ReadOnlySpan<char> textBufferSpan,
+        public void CalculateUserCharGlyphAdvancePos(READ_ONLY_CHARS textBufferSpan,
             ILineSegmentList lineSegs, RequestFont font,
             int[] outputUserInputCharAdvance, out int outputTotalW, out int lineHeight)
         {
@@ -289,7 +291,7 @@ namespace LayoutFarm
             throw new NotImplementedException();
         }
 
-        public GlyphPlanSequence CreateGlyphPlanSeq(ReadOnlySpan<char> textBufferSpan, RequestFont font)
+        public GlyphPlanSequence CreateGlyphPlanSeq(READ_ONLY_CHARS textBufferSpan, RequestFont font)
         {
 
             Typeface typeface = ResolveTypeface(font);
@@ -297,7 +299,7 @@ namespace LayoutFarm
 
             return _txtServices.GetUnscaledGlyphPlanSequence(textBufferSpan);
         }
-        public Size MeasureString(ReadOnlySpan<char> textBufferSpan, RequestFont font)
+        public Size MeasureString(READ_ONLY_CHARS textBufferSpan, RequestFont font)
         {
             Typeface typeface = ResolveTypeface(font);
             _txtServices.SetCurrentFont(typeface, font.SizeInPoints);
@@ -307,7 +309,7 @@ namespace LayoutFarm
             _txtServices.MeasureString(textBufferSpan, out w, out h);
             return new Size(w, h);
         }
-        public void MeasureString(ReadOnlySpan<char> textBufferSpan, RequestFont font, int limitWidth, out int charFit, out int charFitWidth)
+        public void MeasureString(READ_ONLY_CHARS textBufferSpan, RequestFont font, int limitWidth, out int charFit, out int charFitWidth)
         {
             Typeface typeface = ResolveTypeface(font);
             _txtServices.SetCurrentFont(typeface, font.SizeInPoints);
@@ -380,8 +382,8 @@ namespace LayoutFarm
 
         }
         List<MyLineSegment> _resuableLineSegments = new List<MyLineSegment>();
-
-        public ILineSegmentList BreakToLineSegments(ReadOnlySpan<char> str)
+      
+        public ILineSegmentList BreakToLineSegments(READ_ONLY_CHARS str)
         {
             _resuableLineSegments.Clear();
 

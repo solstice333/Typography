@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using Typography.OpenFont;
+using READ_ONLY_CHARS = System.ReadOnlySpan<char>;
 
 namespace Typography.TextLayout
 {
@@ -305,7 +306,7 @@ namespace Typography.TextLayout
         /// <param name="str"></param>
         /// <param name="startAt"></param>
         /// <param name="len"></param>
-        public void Layout(ReadOnlySpan<char> str)
+        public void Layout(READ_ONLY_CHARS str)
         {
 
             //[A]

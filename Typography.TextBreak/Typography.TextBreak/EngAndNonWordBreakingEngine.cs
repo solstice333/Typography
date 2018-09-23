@@ -2,7 +2,7 @@
 // some code from icu-project
 // © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html#License
-
+using READ_ONLY_CHARS = System.ReadOnlySpan<char>;
 namespace Typography.TextBreak
 {
     public class EngAndNonWordBreakingEngine : BreakingEngine
@@ -39,7 +39,7 @@ namespace Typography.TextBreak
         {
             return true;
         }
-        internal override WordVisitor BreakWord(WordVisitor visitor, System.ReadOnlySpan<char> input)
+        internal override WordVisitor BreakWord(WordVisitor visitor, READ_ONLY_CHARS input)
         {
             visitor.State = VisitorState.Parsing;
             //----------------------------------------

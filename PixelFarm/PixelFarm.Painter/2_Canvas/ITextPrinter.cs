@@ -1,4 +1,5 @@
 ﻿//MIT, 2014-present, WinterDev 
+using READ_ONLY_CHARS = System.ReadOnlySpan<char>;
 
 namespace PixelFarm.Drawing
 {
@@ -25,19 +26,19 @@ namespace PixelFarm.Drawing
         //
         bool SupportsWordBreak { get; }
 
-        ILineSegmentList BreakToLineSegments(System.ReadOnlySpan<char> textBufferSpan);
+        ILineSegmentList BreakToLineSegments(READ_ONLY_CHARS textBufferSpan);
         //
-        Size MeasureString(System.ReadOnlySpan<char> textBufferSpan, RequestFont font);
+        Size MeasureString(READ_ONLY_CHARS textBufferSpan, RequestFont font);
 
-        void MeasureString(System.ReadOnlySpan<char> textBufferSpan, RequestFont font, int maxWidth, out int charFit, out int charFitWidth);
+        void MeasureString(READ_ONLY_CHARS textBufferSpan, RequestFont font, int maxWidth, out int charFit, out int charFitWidth);
 
-        void CalculateUserCharGlyphAdvancePos(System.ReadOnlySpan<char> textBufferSpan, 
+        void CalculateUserCharGlyphAdvancePos(READ_ONLY_CHARS textBufferSpan, 
             RequestFont font,
             int[] outputXAdvances,
             out int outputTotalW,
             out int lineHeight);
 
-        void CalculateUserCharGlyphAdvancePos(System.ReadOnlySpan<char> textBufferSpan, ILineSegmentList lineSegs,
+        void CalculateUserCharGlyphAdvancePos(READ_ONLY_CHARS textBufferSpan, ILineSegmentList lineSegs,
             RequestFont font, int[] outputXAdvances, out int outputTotalW, out int lineHeight);
     }
 
@@ -49,7 +50,7 @@ namespace PixelFarm.Drawing
     public interface ITextPrinter
     {
         bool StartDrawOnLeftTop { get; set; }
-        void DrawString(System.ReadOnlySpan<char> charBuffer, double x, double y);
+        void DrawString(READ_ONLY_CHARS charBuffer, double x, double y);
         /// <summary>
         /// render from RenderVxFormattedString object to specific pos
         /// </summary>

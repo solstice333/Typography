@@ -5,7 +5,7 @@
 
 using System;
 using System.Collections.Generic;
-
+using READ_ONLY_CHARS = System.ReadOnlySpan<char>;
 namespace Typography.TextBreak
 {
     public enum VisitorState
@@ -18,9 +18,9 @@ namespace Typography.TextBreak
     
     public ref struct WordVisitor
     {
-        readonly ReadOnlySpan<char> _buffer;
+        readonly READ_ONLY_CHARS _buffer;
 
-        public WordVisitor(ReadOnlySpan<char> buffer, Action<BreakSpan> breakSpanAction)
+        public WordVisitor(READ_ONLY_CHARS buffer, Action<BreakSpan> breakSpanAction)
         {
             _buffer = buffer;
             BreakSpanAction = breakSpanAction;

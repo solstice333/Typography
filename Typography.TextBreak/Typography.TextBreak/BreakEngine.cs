@@ -1,6 +1,6 @@
 ﻿//MIT, 2016-2017, WinterDev
 //some code from ICU project with BSD license
-
+using READ_ONLY_CHARS = System.ReadOnlySpan<char>;
 namespace Typography.TextBreak
 {
     public enum TextBreakKind
@@ -12,13 +12,13 @@ namespace Typography.TextBreak
    
     public abstract class TextBreaker
     {
-        public abstract void DoBreakCore(WordVisitor visitor, System.ReadOnlySpan<char> input);
+        public abstract void DoBreakCore(WordVisitor visitor, READ_ONLY_CHARS input);
         public TextBreakKind BreakKind
         {
             get;
             set;
         }
-        public void DoBreak(WordVisitor visitor, System.ReadOnlySpan<char> input)
+        public void DoBreak(WordVisitor visitor, READ_ONLY_CHARS input)
         {
             IsCanceled = false;//reset 
             //to end

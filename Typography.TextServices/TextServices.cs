@@ -5,6 +5,7 @@ using Typography.OpenFont;
 using Typography.TextLayout;
 using Typography.FontManagement;
 using System.IO;
+using READ_ONLY_CHARS = System.ReadOnlySpan<char>;
 
 namespace Typography.TextLayout
 {
@@ -42,7 +43,7 @@ namespace Typography.TextServices
         public TextServices()
         {
 
-            typefaceStore = ActiveTypefaceCache.GetTypefaceStoreOrCreateNewIfNotExist(); 
+            typefaceStore = ActiveTypefaceCache.GetTypefaceStoreOrCreateNewIfNotExist();
             _glyphLayout = new GlyphLayout();
         }
         public void SetDefaultScriptLang(ScriptLang scLang)
@@ -97,7 +98,7 @@ namespace Typography.TextServices
 
         }
 
-        public GlyphPlanSequence GetUnscaledGlyphPlanSequence(ReadOnlySpan<char> buffer)
+        public GlyphPlanSequence GetUnscaledGlyphPlanSequence(READ_ONLY_CHARS buffer)
         {
             //under current typeface + scriptlang setting 
             return _currentGlyphPlanSeqCache.GetUnscaledGlyphPlanSequence(_glyphLayout, buffer);
@@ -108,7 +109,7 @@ namespace Typography.TextServices
         }
 
         Typography.TextBreak.CustomBreaker _textBreaker;
-        public List<BreakSpan> BreakToLineSegments(ReadOnlySpan<char>str)
+        public List<BreakSpan> BreakToLineSegments(READ_ONLY_CHARS str)
         {
             var outputList = new List<BreakSpan>();
             //user must setup the CustomBreakerBuilder before use              
@@ -218,7 +219,7 @@ namespace Typography.TextServices
 
         UnscaledGlyphPlanList _reusableGlyphPlanList = new UnscaledGlyphPlanList();
 
-        public void MeasureString(ReadOnlySpan<char> str, out int w, out int h)
+        public void MeasureString(READ_ONLY_CHARS str, out int w, out int h)
         {
             //measure string 
             //check if we use cache feature or not
@@ -271,7 +272,7 @@ namespace Typography.TextServices
             h = (int)System.Math.Round(accumH);
         }
 
-        public void MeasureString(ReadOnlySpan<char> str, int limitWidth, out int charFit, out int charFitWidth)
+        public void MeasureString(READ_ONLY_CHARS str, int limitWidth, out int charFit, out int charFitWidth)
         {
             //measure string 
             if (str.Length < 1)
@@ -290,7 +291,7 @@ namespace Typography.TextServices
             //but in this code, we use our Typography' parser
             //-------------------
             //user must setup the CustomBreakerBuilder before use         
-            
+
             float accumW = 0;
 
             foreach (BreakSpan breakSpan in BreakToLineSegments(str))
@@ -465,7 +466,7 @@ namespace Typography.TextServices
             _scLang = scLang;
             _glyphPlanSeqSet = new GlyphPlanSeqSet();
         }
-        static int CalculateHash(ReadOnlySpan<char> buffer)
+        static int CalculateHash(READ_ONLY_CHARS buffer)
         {
             //reference,
             //https://stackoverflow.com/questions/2351087/what-is-the-best-32bit-hash-function-for-short-strings-tag-names
@@ -473,7 +474,7 @@ namespace Typography.TextServices
         }
         public GlyphPlanSequence GetUnscaledGlyphPlanSequence(
             GlyphLayout glyphLayout,
-            ReadOnlySpan<char> buffer)
+            READ_ONLY_CHARS buffer)
         {
 
             //UNSCALED VERSION

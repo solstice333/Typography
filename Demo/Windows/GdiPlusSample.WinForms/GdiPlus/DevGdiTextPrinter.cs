@@ -8,6 +8,8 @@ using Typography.OpenFont;
 using Typography.TextLayout;
 using Typography.Contours;
 
+using READ_ONLY_CHARS = System.ReadOnlySpan<char>;
+
 
 namespace SampleWinForms
 {
@@ -98,7 +100,7 @@ namespace SampleWinForms
             this.TargetGraphics.DrawLine(Pens.Red, x, y, x, y + this.FontAscendingPx);
         }
         UnscaledGlyphPlanList _reusableUnscaledGlyphPlanList = new UnscaledGlyphPlanList();
-        public override void DrawString(ReadOnlySpan<char> textBuffer, float x, float y)
+        public override void DrawString(READ_ONLY_CHARS textBuffer, float x, float y)
         {
 
             _reusableUnscaledGlyphPlanList.Clear();

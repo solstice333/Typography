@@ -4,6 +4,9 @@ using Typography.Contours;
 using Typography.OpenFont;
 using Typography.OpenFont.Extensions;
 using Typography.TextLayout;
+
+using READ_ONLY_CHARS = System.ReadOnlySpan<char>;
+
 namespace PixelFarm.Drawing.Fonts
 {
 
@@ -307,9 +310,9 @@ namespace PixelFarm.Drawing.Fonts
         }
 
 
-        public void DrawString(ReadOnlySpan<char> text, double x, double y) =>
+        public void DrawString(READ_ONLY_CHARS text, double x, double y) =>
             DrawString(text, (float)x, (float)y);
-        public override void DrawString(ReadOnlySpan<char> textBuffer, float x, float y)
+        public override void DrawString(READ_ONLY_CHARS textBuffer, float x, float y)
         {
             UpdateGlyphLayoutSettings();
             //unscale layout, with design unit scale

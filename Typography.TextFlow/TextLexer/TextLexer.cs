@@ -1,7 +1,9 @@
 ﻿//MIT, 2014-present, WinterDev
 using System.Collections.Generic;
-
 using Typography.TextLayout;
+
+using READ_ONLY_CHARS = System.ReadOnlySpan<char>;
+
 namespace Typography.TextBreak
 {
     public class TextBlockLexer
@@ -14,7 +16,7 @@ namespace Typography.TextBreak
                 return spans;
             }
         }
-        public virtual void Lex(System.ReadOnlySpan<char> buffer)
+        public virtual void Lex(READ_ONLY_CHARS buffer)
         {
             WordSpanKind lexMode = WordSpanKind.Unknown;
             //simple line break / whitespace lexer
@@ -171,7 +173,7 @@ namespace Typography.TextBreak
         }
     }
 
-    
+
     public struct LexWordSpan
     {
         public int start;

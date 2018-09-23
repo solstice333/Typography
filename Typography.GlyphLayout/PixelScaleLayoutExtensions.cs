@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using Typography.OpenFont;
+using READ_ONLY_CHARS = System.ReadOnlySpan<char>;
 
 namespace Typography.TextLayout
 {
@@ -252,7 +253,7 @@ namespace Typography.TextLayout
 
         public static MeasuredStringBox LayoutAndMeasureString(
             this GlyphLayout glyphLayout,
-            ReadOnlySpan<char> textBuffer,
+            READ_ONLY_CHARS textBuffer,
             float fontSizeInPoints,
             bool snapToGrid = true)
         {

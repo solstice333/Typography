@@ -5,7 +5,7 @@
 
 using System;
 using System.Collections.Generic;
-
+using READ_ONLY_CHARS = System.ReadOnlySpan<char>;
 namespace Typography.TextBreak
 {
     public class CustomBreaker
@@ -78,13 +78,13 @@ namespace Typography.TextBreak
             BreakWords(inputstr.AsSpan(), outputBreakAtList);
 
         private static BreakAtInfo BreakSpanToAt(BreakSpan span) => new BreakAtInfo(span.startAt + span.len, span.wordKind);
-        public void BreakWords(ReadOnlySpan<char> charBuff, ICollection<BreakAtInfo> outputBreakAtList) =>
+        public void BreakWords(READ_ONLY_CHARS charBuff, ICollection<BreakAtInfo> outputBreakAtList) =>
             BreakWords(charBuff, span => outputBreakAtList.Add(BreakSpanToAt(span)));
 
-        public void BreakWords(ReadOnlySpan<char> charBuff, ICollection<BreakSpan> outputBreakSpanList) =>
+        public void BreakWords(READ_ONLY_CHARS charBuff, ICollection<BreakSpan> outputBreakSpanList) =>
             BreakWords(charBuff, outputBreakSpanList.Add);
         
-        public void BreakWords(ReadOnlySpan<char> charBuff, Action<BreakSpan> outputBreakSpanAction)
+        public void BreakWords(READ_ONLY_CHARS charBuff, Action<BreakSpan> outputBreakSpanAction)
         {
             //convert to char buffer 
             if (charBuff.IsEmpty) return;

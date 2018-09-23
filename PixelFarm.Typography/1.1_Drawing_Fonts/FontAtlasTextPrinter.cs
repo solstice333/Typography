@@ -8,6 +8,10 @@ using Typography.Rendering;
 using Typography.TextLayout;
 using Typography.Contours;
 
+
+using READ_ONLY_CHARS = System.ReadOnlySpan<char>;
+
+
 namespace PixelFarm.Drawing.Fonts
 {
 
@@ -385,9 +389,9 @@ namespace PixelFarm.Drawing.Fonts
             //
             _painter.DestBitmapBlender.OutputPixelBlender = prevPxBlender;//restore back
         }
-        void ITextPrinter.DrawString(ReadOnlySpan<char> textBuffer, double x, double y) =>
+        void ITextPrinter.DrawString(READ_ONLY_CHARS textBuffer, double x, double y) =>
             DrawString(textBuffer, (float)x, (float)y);
-        public override void DrawString(ReadOnlySpan<char> textBuffer, float x, float y)
+        public override void DrawString(READ_ONLY_CHARS textBuffer, float x, float y)
         {
             //ask text service to parse user input char buffer and create a glyph-plan-sequence (list of glyph-plan) 
             //with specific request font      
