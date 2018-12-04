@@ -8,8 +8,6 @@ using Typography.OpenFont;
 using Typography.TextLayout;
 using Typography.Contours;
 
-using READ_ONLY_CHARS = System.ReadOnlySpan<char>;
-
 
 namespace SampleWinForms
 {
@@ -100,20 +98,39 @@ namespace SampleWinForms
             this.TargetGraphics.DrawLine(Pens.Red, x, y, x, y + this.FontAscendingPx);
         }
         UnscaledGlyphPlanList _reusableUnscaledGlyphPlanList = new UnscaledGlyphPlanList();
-        public override void DrawString(READ_ONLY_CHARS textBuffer, float x, float y)
+
+
+        public void DrawString(char[] textBuffer, int startAt, int len, float x, float y)
         {
+            //TODO: review here...
 
-            _reusableUnscaledGlyphPlanList.Clear();
-            //1. unscale layout, in design unit
-            this._glyphLayout.Layout(textBuffer);
-            _glyphLayout.GenerateUnscaledGlyphPlans(_reusableUnscaledGlyphPlanList);
+            //_reusableUnscaledGlyphPlanList.Clear();
+            ////1. unscale layout, in design unit
+            //this._glyphLayout.Layout(textBuffer, startAt, len);
+            //_glyphLayout.GenerateUnscaledGlyphPlans(_reusableUnscaledGlyphPlanList);
 
-            //draw from the glyph plan seq
+            ////draw from the glyph plan seq 
+            //DrawFromGlyphPlans(
+            //    new GlyphPlanSequence(_reusableUnscaledGlyphPlanList),
+            //    x, y);
 
-            DrawFromGlyphPlans(
-                new GlyphPlanSequence(_reusableUnscaledGlyphPlanList),
-                x, y);
+        }
+        public override void GenerateGlyphPlan(char[] textBuffer, int start, int len, IUnscaledGlyphPlanList unscaledGlyphPlan)
+        {
+            //TODO: review here...
 
+        }
+        public override void DrawFromGlyphPlans(GlyphPlanSequence glyphPlanList, float x, float y)
+        {
+            throw new NotImplementedException();
+        }
+        public override void GenerateGlyphPlan(ReadOnlySpan<char> textBuffer, IUnscaledGlyphPlanList unscaledGlyphPlan)
+        {
+            base.GenerateGlyphPlan(textBuffer, unscaledGlyphPlan);
+        }
+        public override void DrawString(ReadOnlySpan<char> textBuffer, float x, float y)
+        {
+            throw new NotImplementedException();
         }
         public void UpdateGlyphLayoutSettings()
         {
@@ -130,63 +147,64 @@ namespace SampleWinForms
             _outlinePen.Color = this.OutlineColor;
         }
 
-        public override void DrawFromGlyphPlans(GlyphPlanSequence seq, float x, float y)
-        {
-            UpdateVisualOutputSettings();
+        //public override void DrawFromGlyphPlans(GlyphPlanSequence seq, int startAt, int len, float x, float y)
+        //{
+        //    UpdateVisualOutputSettings();
 
-            //draw data in glyph plan 
-            //3. render each glyph 
+        //    //draw data in glyph plan 
+        //    //3. render each glyph 
 
-            float sizeInPoints = this.FontSizeInPoints;
-            float pxscale = _currentTypeface.CalculateScaleToPixelFromPointSize(sizeInPoints);
-            //
-            _glyphMeshCollections.SetCacheInfo(this.Typeface, sizeInPoints, this.HintTechnique);
+        //    float sizeInPoints = this.FontSizeInPoints;
+        //    float pxscale = _currentTypeface.CalculateScaleToPixelFromPointSize(sizeInPoints);
+        //    //
+        //    _glyphMeshCollections.SetCacheInfo(this.Typeface, sizeInPoints, this.HintTechnique);
 
 
-            //this draw a single line text span*** 
-            Graphics g = this.TargetGraphics;
+        //    //this draw a single line text span*** 
+        //    Graphics g = this.TargetGraphics;
 
-            float cx = 0;
-            float cy = 0;
+        //    float cx = 0;
+        //    float cy = 0;
 
-            var snapToPxScale = new GlyphPlanSequenceSnapPixelScaleLayout(seq, pxscale);
+        //    //var snapToPxScale = new GlyphPlanSequenceSnapPixelScaleLayout(seq, startAt, len, pxscale);
+        //    var snapToPxScale = new GlyphPlanSequenceSnapPixelScaleLayout(seq, pxscale);
 
-            while (snapToPxScale.Read())
-            {
-                GraphicsPath foundPath;
+        //    while (snapToPxScale.Read())
+        //    {
+        //        GraphicsPath foundPath;
 
-                if (!_glyphMeshCollections.TryGetCacheGlyph(snapToPxScale.CurrentGlyphIndex, out foundPath))
-                {
-                    //if not found then create a new one
-                    _currentGlyphPathBuilder.BuildFromGlyphIndex(snapToPxScale.CurrentGlyphIndex, sizeInPoints);
-                    _txToGdiPath.Reset();
-                    _currentGlyphPathBuilder.ReadShapes(_txToGdiPath);
-                    foundPath = _txToGdiPath.ResultGraphicsPath;
+        //        if (!_glyphMeshCollections.TryGetCacheGlyph(snapToPxScale.CurrentGlyphIndex, out foundPath))
+        //        {
+        //            //if not found then create a new one
+        //            _currentGlyphPathBuilder.BuildFromGlyphIndex(snapToPxScale.CurrentGlyphIndex, sizeInPoints);
+        //            _txToGdiPath.Reset();
+        //            _currentGlyphPathBuilder.ReadShapes(_txToGdiPath);
+        //            foundPath = _txToGdiPath.ResultGraphicsPath;
 
-                    //register
-                    _glyphMeshCollections.RegisterCachedGlyph(snapToPxScale.CurrentGlyphIndex, foundPath);
-                }
-                //------
-                //then move pen point to the position we want to draw a glyph
+        //            //register
+        //            _glyphMeshCollections.RegisterCachedGlyph(snapToPxScale.CurrentGlyphIndex, foundPath);
+        //        }
+        //        //------
+        //        //then move pen point to the position we want to draw a glyph
 
-                cx = (float)Math.Round(snapToPxScale.ExactX + x);
-                cy = (float)Math.Floor(snapToPxScale.ExactY + y);
+        //        cx = (float)Math.Round(snapToPxScale.ExactX + x);
+        //        cy = (float)Math.Floor(snapToPxScale.ExactY + y);
 
-                g.TranslateTransform(cx, cy);
+        //        g.TranslateTransform(cx, cy);
 
-                if (FillBackground)
-                {
-                    g.FillPath(_fillBrush, foundPath);
-                }
-                if (DrawOutline)
-                {
-                    g.DrawPath(_outlinePen, foundPath);
-                }
-                //and then we reset back ***
-                g.TranslateTransform(-cx, -cy); 
-            }
-             
-        }
+        //        if (FillBackground)
+        //        {
+        //            g.FillPath(_fillBrush, foundPath);
+        //        }
+        //        if (DrawOutline)
+        //        {
+        //            g.DrawPath(_outlinePen, foundPath);
+        //        }
+        //        //and then we reset back ***
+        //        g.TranslateTransform(-cx, -cy);
+        //    }
+
+        //}
 
     }
 }

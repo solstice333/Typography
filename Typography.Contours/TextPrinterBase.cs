@@ -30,9 +30,17 @@ namespace Typography.Contours
         {
             GlyphLayout glyphLayout = this.GlyphLayoutMan;
             glyphLayout.Layout(textBuffer);
-            glyphLayout.GenerateUnscaledGlyphPlans(unscaledGlyphPlan); 
+            glyphLayout.GenerateUnscaledGlyphPlans(unscaledGlyphPlan);
         }
-        
+        public virtual void GenerateGlyphPlan(
+                  char[] textBuffer,
+                  int start, int len,
+                  IUnscaledGlyphPlanList unscaledGlyphPlan)
+        {
+            GlyphLayout glyphLayout = this.GlyphLayoutMan;
+            glyphLayout.Layout(textBuffer);
+            glyphLayout.GenerateUnscaledGlyphPlans(unscaledGlyphPlan);
+        }
 
         public bool FillBackground { get; set; }
         public bool DrawOutline { get; set; }
@@ -85,7 +93,7 @@ namespace Typography.Contours
         /// <param name="x"></param>
         /// <param name="y"></param>
         public abstract void DrawFromGlyphPlans(GlyphPlanSequence glyphPlanList, float x, float y);
-       
+
         /// <summary>
         /// draw caret at xpos,ypos (sample only)
         /// </summary>

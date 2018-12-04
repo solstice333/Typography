@@ -1,15 +1,17 @@
-﻿//BSD, 2014-2017, WinterDev
+﻿//BSD, 2014-present, WinterDev
 
 using System;
 using System.Collections.Generic;
-namespace MiniCollection
+namespace Tesselate
 {
+
+    //TODO: review this again....
     //-----
     //design for our tess only
     //not for general use.
     //----- 
-    public class RefItem<T>
-        where T : IComparable<T>
+    class RefItem<T>
+      where T : IComparable<T>
     {
         public RefItem(T data)
         {
@@ -25,8 +27,8 @@ namespace MiniCollection
 #endif
     }
 
-    public class MaxFirstList<T>
-        where T : IComparable<T>
+    class MaxFirstList<T>
+      where T : IComparable<T>
     {
         List<RefItem<T>> innerList = new List<RefItem<T>>();
         bool isSorted = false;

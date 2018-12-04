@@ -152,16 +152,18 @@ namespace SampleWinForms
             _currentTextPrinter.TargetGraphics = g;
             //render at specific pos
             float x_pos = 0, y_pos = 100;
-            var textBuffer = System.MemoryExtensions.AsSpan(txtInputChar.Text);
+            char[] textBuffer = txtInputChar.Text.ToCharArray();
 
             //test draw multiple lines
             float lineSpacingPx = _currentTextPrinter.FontLineSpacingPx;
             for (int i = 0; i < 3; ++i)
             {
                 _currentTextPrinter.DrawString(
-                    textBuffer,
-                    x_pos,
-                    y_pos
+                 textBuffer,
+                 0,
+                 textBuffer.Length,
+                 x_pos,
+                 y_pos
                 );
                 //draw top to bottom 
                 y_pos -= lineSpacingPx;
@@ -262,13 +264,15 @@ namespace SampleWinForms
             _currentTextPrinter.PositionTechnique = (PositionTechnique)cmbPositionTech.SelectedItem;
             //render at specific pos
             float x_pos = 0, y_pos = 100;
-            var textBuffer = System.MemoryExtensions.AsSpan(txtInputChar.Text);
+            char[] textBuffer = txtInputChar.Text.ToCharArray();
 
             //Example 1: this is a basic draw sample
             _currentTextPrinter.FillColor = Color.Black;
             _currentTextPrinter.TargetGraphics = g;
             _currentTextPrinter.DrawString(
                 textBuffer,
+                 0,
+                 textBuffer.Length,
                  x_pos,
                  y_pos
                 );
@@ -280,7 +284,7 @@ namespace SampleWinForms
 
 
             _reusableUnscaledGlyphPlan.Clear();
-            _currentTextPrinter.GenerateGlyphPlan(textBuffer, _reusableUnscaledGlyphPlan);
+            _currentTextPrinter.GenerateGlyphPlan(textBuffer, 0, textBuffer.Length, _reusableUnscaledGlyphPlan);
             //2.2
             //and we can print the formatted glyph plan later.
             y_pos -= _currentTextPrinter.FontLineSpacingPx;
@@ -294,7 +298,8 @@ namespace SampleWinForms
 
             //TODO: review here again
             MeasuredStringBox strBox = _currentTextPrinter.GlyphLayoutMan.LayoutAndMeasureString(
-                textBuffer,
+                textBuffer, 0,
+                textBuffer.Length,
                 _currentTextPrinter.FontSizeInPoints);
 
             //draw line mark

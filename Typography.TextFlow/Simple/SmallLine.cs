@@ -42,7 +42,7 @@ namespace Typography.TextLayout
         int _caretCharIndex = 0;//default  
         //TODO: temp public, review accessibility here again
         int _count = 0;
-        char[] _charBuffer = null;
+        public char[] _charBuffer = null;
         PxScaledGlyphPlan[] _glyphPlans;
         List<UserCodePointToGlyphIndex> _userCodePointToGlyphIndexMap = new List<UserCodePointToGlyphIndex>();
 
