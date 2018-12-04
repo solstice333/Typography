@@ -3,6 +3,7 @@
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
+using PixelFarm.CpuBlit.Rasterization;
 
 namespace PixelFarm.CpuBlit.Imaging
 {
@@ -26,7 +27,9 @@ namespace PixelFarm.CpuBlit.Imaging
                 MemMx.memcpy((byte*)hBmpScan0, (byte*)memPtr.Ptr, actualImage.Stride * actualImage.Height);
             }
             //System.Runtime.InteropServices.Marshal.Copy(rawBuffer, 0,
-            //   hBmpScan0, rawBuffer.Length); 
+            //   hBmpScan0, rawBuffer.Length);
+
+            memPtr.Dispose();
         }
 
 
@@ -80,7 +83,7 @@ namespace PixelFarm.CpuBlit.Imaging
                         }
                     }
                 }
-
+                srcBufferPtr.Dispose();
                 bitmap.UnlockBits(bitmapData1);
                 //}
                 //sss.Stop();
@@ -202,7 +205,7 @@ namespace PixelFarm.CpuBlit.Imaging
                         }
                     }
                 }
-
+                srcBufferPtr.Dispose();
                 bitmap.UnlockBits(bitmapData1);
                 //}
                 //sss.Stop();
@@ -497,7 +500,7 @@ namespace PixelFarm.CpuBlit.Imaging
                 //    }
                 //}
             }
-
+            targetBufferPtr.Dispose();
             windowsBitmap.UnlockBits(bitmapData1);
         }
 

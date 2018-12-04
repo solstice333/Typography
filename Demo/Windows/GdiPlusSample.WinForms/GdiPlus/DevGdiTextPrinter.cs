@@ -8,8 +8,6 @@ using Typography.OpenFont;
 using Typography.TextLayout;
 using Typography.Contours;
 
-using READ_ONLY_CHARS = System.ReadOnlySpan<char>;
-
 
 namespace SampleWinForms
 {
@@ -100,12 +98,12 @@ namespace SampleWinForms
             this.TargetGraphics.DrawLine(Pens.Red, x, y, x, y + this.FontAscendingPx);
         }
         UnscaledGlyphPlanList _reusableUnscaledGlyphPlanList = new UnscaledGlyphPlanList();
-        public override void DrawString(READ_ONLY_CHARS textBuffer, float x, float y)
+        public override void DrawString(char[] textBuffer, int startAt, int len, float x, float y)
         {
 
             _reusableUnscaledGlyphPlanList.Clear();
             //1. unscale layout, in design unit
-            this._glyphLayout.Layout(textBuffer);
+            this._glyphLayout.Layout(textBuffer, startAt, len);
             _glyphLayout.GenerateUnscaledGlyphPlans(_reusableUnscaledGlyphPlanList);
 
             //draw from the glyph plan seq
@@ -130,7 +128,7 @@ namespace SampleWinForms
             _outlinePen.Color = this.OutlineColor;
         }
 
-        public override void DrawFromGlyphPlans(GlyphPlanSequence seq, float x, float y)
+        public override void DrawFromGlyphPlans(GlyphPlanSequence seq, int startAt, int len, float x, float y)
         {
             UpdateVisualOutputSettings();
 
@@ -149,7 +147,7 @@ namespace SampleWinForms
             float cx = 0;
             float cy = 0;
 
-            var snapToPxScale = new GlyphPlanSequenceSnapPixelScaleLayout(seq, pxscale);
+            var snapToPxScale = new GlyphPlanSequenceSnapPixelScaleLayout(seq, startAt, len, pxscale);
 
             while (snapToPxScale.Read())
             {
