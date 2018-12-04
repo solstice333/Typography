@@ -2,8 +2,7 @@
 
 using System;
 using System.Drawing;
-using System.Drawing.Imaging; 
-using PixelFarm.CpuBlit.Rasterization;
+using System.Drawing.Imaging;
 
 namespace PixelFarm.CpuBlit.Imaging
 {
@@ -15,28 +14,26 @@ namespace PixelFarm.CpuBlit.Imaging
         /// <param name="actualImage"></param>
         /// <param name="hBmpScan0"></param>
         public static void CopyToWindowsBitmapSameSize(
-              actualImage,
+           MemBitmap actualImage,
            IntPtr hBmpScan0)
         {
             //1st, fast
             //byte[] rawBuffer = ActualImage.GetBuffer(actualImage);
 
-            TempMemPtr memPtr = ActualBitmap.GetBufferPtr(actualImage);
+            TempMemPtr memPtr = MemBitmap.GetBufferPtr(actualImage);
             unsafe
             {
                 MemMx.memcpy((byte*)hBmpScan0, (byte*)memPtr.Ptr, actualImage.Stride * actualImage.Height);
             }
             //System.Runtime.InteropServices.Marshal.Copy(rawBuffer, 0,
-            //   hBmpScan0, rawBuffer.Length);
-
-            memPtr.Release();
+            //   hBmpScan0, rawBuffer.Length); 
         }
 
 
 
         /////////////////////////////////////////////////////////////////////////////////////
         public static void CopyToGdiPlusBitmapSameSizeNotFlip(
-          ActualBitmap actualImage,
+          MemBitmap actualImage,
           Bitmap bitmap)
         {
             //agg store image buffer head-down
@@ -59,7 +56,7 @@ namespace PixelFarm.CpuBlit.Imaging
                 IntPtr scan0 = bitmapData1.Scan0;
                 int stride = bitmapData1.Stride;
                 //byte[] srcBuffer = ActualImage.GetBuffer(actualImage);
-                TempMemPtr srcBufferPtr = ActualBitmap.GetBufferPtr(actualImage);
+                TempMemPtr srcBufferPtr = MemBitmap.GetBufferPtr(actualImage);
                 unsafe
                 {
                     //fixed (byte* bufferH = &srcBuffer[0])
@@ -83,7 +80,7 @@ namespace PixelFarm.CpuBlit.Imaging
                         }
                     }
                 }
-                srcBufferPtr.Release();
+
                 bitmap.UnlockBits(bitmapData1);
                 //}
                 //sss.Stop();
@@ -158,7 +155,7 @@ namespace PixelFarm.CpuBlit.Imaging
             //} 
         }
         public static void CopyToGdiPlusBitmapSameSize(
-            ActualBitmap actualImage,
+            MemBitmap actualImage,
             Bitmap bitmap)
         {
             //agg store image buffer head-down
@@ -181,7 +178,7 @@ namespace PixelFarm.CpuBlit.Imaging
                 IntPtr scan0 = bitmapData1.Scan0;
                 int stride = bitmapData1.Stride;
                 //byte[] srcBuffer = ActualImage.GetBuffer(actualImage);
-                TempMemPtr srcBufferPtr = ActualBitmap.GetBufferPtr(actualImage);
+                TempMemPtr srcBufferPtr = MemBitmap.GetBufferPtr(actualImage);
                 unsafe
                 {
                     //fixed (byte* bufferH = &srcBuffer[0])
@@ -205,7 +202,7 @@ namespace PixelFarm.CpuBlit.Imaging
                         }
                     }
                 }
-                srcBufferPtr.Release();
+
                 bitmap.UnlockBits(bitmapData1);
                 //}
                 //sss.Stop();
@@ -393,13 +390,13 @@ namespace PixelFarm.CpuBlit.Imaging
         }
         public static void CopyFromGdiPlusBitmapSameSizeTo32BitsBuffer(
            Bitmap windowsBitmap,
-           ActualBitmap actualImage)
+           MemBitmap actualImage)
         {
 
             int h = windowsBitmap.Height;
             int w = windowsBitmap.Width;
             //byte[] targetBuffer = ActualImage.GetBuffer(actualImage);
-            TempMemPtr targetBufferPtr = ActualBitmap.GetBufferPtr(actualImage);
+            TempMemPtr targetBufferPtr = MemBitmap.GetBufferPtr(actualImage);
             BitmapData bitmapData1 = windowsBitmap.LockBits(
                       new Rectangle(0, 0,
                           w,
@@ -500,7 +497,7 @@ namespace PixelFarm.CpuBlit.Imaging
                 //    }
                 //}
             }
-            targetBufferPtr.Release();
+
             windowsBitmap.UnlockBits(bitmapData1);
         }
 

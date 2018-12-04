@@ -22,7 +22,7 @@ namespace SampleWinForms
     {
         Graphics g;
         AggPainter painter;
-        ActualBitmap destImg;
+        MemBitmap destImg;
         Bitmap winBmp;
 
         TextPrinterBase selectedTextPrinter = null;
@@ -179,7 +179,7 @@ namespace SampleWinForms
             //
             if (g == null)
             {
-                destImg = new ActualBitmap(800, 600);
+                destImg = new MemBitmap(800, 600);
                 painter = AggPainter.Create(destImg);
                 winBmp = new Bitmap(destImg.Width, destImg.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
                 g = this.CreateGraphics();
@@ -385,7 +385,7 @@ namespace SampleWinForms
             MsdfGenParams genParams = new MsdfGenParams();
             GlyphImage glyphImg = MsdfGlyphGen.CreateMsdfImage(glyphToContour, genParams);
 
-            ActualBitmap actualImg = ActualBitmap.CreateFromBuffer(glyphImg.Width, glyphImg.Height, glyphImg.GetImageBuffer());
+            MemBitmap actualImg = MemBitmap.CreateFromBuffer(glyphImg.Width, glyphImg.Height, glyphImg.GetImageBuffer());
             painter.DrawImage(actualImg, 0, 0);
 
             //using (Bitmap bmp = new Bitmap(w, h, System.Drawing.Imaging.PixelFormat.Format32bppArgb))
