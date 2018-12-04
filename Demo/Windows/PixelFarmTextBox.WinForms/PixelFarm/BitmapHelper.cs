@@ -2,7 +2,7 @@
 
 using System;
 using System.Drawing;
-using System.Drawing.Imaging;
+using System.Drawing.Imaging; 
 using PixelFarm.CpuBlit.Rasterization;
 
 namespace PixelFarm.CpuBlit.Imaging
@@ -15,7 +15,7 @@ namespace PixelFarm.CpuBlit.Imaging
         /// <param name="actualImage"></param>
         /// <param name="hBmpScan0"></param>
         public static void CopyToWindowsBitmapSameSize(
-           ActualBitmap actualImage,
+              actualImage,
            IntPtr hBmpScan0)
         {
             //1st, fast
