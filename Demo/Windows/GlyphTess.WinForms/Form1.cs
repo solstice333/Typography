@@ -11,7 +11,7 @@ using Typography.OpenFont;
 using DrawingGL;
 using DrawingGL.Text;
 //
-
+using PixelFarm.DrawingGL;
 
 namespace Test_WinForm_TessGlyph
 {

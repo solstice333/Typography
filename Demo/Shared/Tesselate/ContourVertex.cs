@@ -41,10 +41,9 @@
 */
 
 using System;
-using MiniCollection;
 namespace Tesselate
 {
-    public class ContourVertex : IComparable<ContourVertex>
+    class ContourVertex : IComparable<ContourVertex>
     {
         public ContourVertex nextVertex;		/* next vertex (never null) */
         public ContourVertex prevVertex;		/* previous vertex (never null) */
