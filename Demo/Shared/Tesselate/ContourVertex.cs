@@ -43,7 +43,7 @@
 using System;
 namespace Tesselate
 {
-    class ContourVertex : IComparable<ContourVertex>
+    public class ContourVertex : IComparable<ContourVertex>
     {
         public ContourVertex nextVertex;		/* next vertex (never null) */
         public ContourVertex prevVertex;		/* previous vertex (never null) */
@@ -56,7 +56,7 @@ namespace Tesselate
         internal double C_1;
         internal double C_2;
         public double x, y;		/* projection onto the sweep plane */
-        public RefItem<ContourVertex> priorityQueueHandle;	/* to allow deletion from priority queue */
+        internal RefItem<ContourVertex> priorityQueueHandle;	/* to allow deletion from priority queue */
         public int CompareTo(ContourVertex otherVertex)
         {
             if (VertEq(otherVertex))

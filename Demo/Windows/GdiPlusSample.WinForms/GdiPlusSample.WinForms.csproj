@@ -99,6 +99,14 @@
       <Project>{f7d71e61-9342-4dd7-9afd-69045f2ec98b}</Project>
       <Name>Typography.OpenFont</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\System.Memory\System.Memory.csproj">
+      <Project>{3f501b34-9e57-4610-8087-208f3a53cfb7}</Project>
+      <Name>System.Memory</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\System.Runtime.CompilerServices.Unsafe\System.Runtime.CompilerServices.Unsafe.csproj">
+      <Project>{455f1b7e-768d-4600-ad7d-c3cfc7f47db3}</Project>
+      <Name>System.Runtime.CompilerServices.Unsafe</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
