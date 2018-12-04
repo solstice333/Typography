@@ -40,7 +40,7 @@ namespace SampleWinForms.UI
             {
                 //TODO: or font face/font-size change 
                 //re-calculate 
-                char[] textBuffer = _line._charBuffer.ToArray();
+                char[] textBuffer = _line._charBuffer;
                 _reusableUnscaledGlyphPlanList.Clear();
                 //userCharToGlyphIndexMap.Clear();
                 //read glyph plan and userCharToGlyphIndexMap          

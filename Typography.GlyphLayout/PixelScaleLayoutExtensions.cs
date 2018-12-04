@@ -253,6 +253,17 @@ namespace Typography.TextLayout
 
         public static MeasuredStringBox LayoutAndMeasureString(
             this GlyphLayout glyphLayout,
+            char[] textBuffer,
+            int start, int len,
+            float fontSizeInPoints,
+            bool snapToGrid = true)
+        {
+
+            //TODO review here
+            return new MeasuredStringBox();
+        }
+        public static MeasuredStringBox LayoutAndMeasureString(
+            this GlyphLayout glyphLayout,
             READ_ONLY_CHARS textBuffer,
             float fontSizeInPoints,
             bool snapToGrid = true)
