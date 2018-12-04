@@ -4,9 +4,6 @@ using Typography.Contours;
 using Typography.OpenFont;
 using Typography.OpenFont.Extensions;
 using Typography.TextLayout;
-
-using READ_ONLY_CHARS = System.ReadOnlySpan<char>;
-
 namespace PixelFarm.Drawing.Fonts
 {
 
@@ -33,7 +30,7 @@ namespace PixelFarm.Drawing.Fonts
         {
             StartDrawOnLeftTop = true;
             //
-            this._painter = painter;
+            _painter = painter;
             _glyphMeshStore = new GlyphMeshStore();
             _glyphMeshStore.FlipGlyphUpward = true;
             this.PositionTechnique = PositionTechnique.OpenFont;
@@ -52,7 +49,7 @@ namespace PixelFarm.Drawing.Fonts
         public void ChangeFont(RequestFont font)
         {
             //1.  resolve actual font file
-            this._reqFont = font;
+            _reqFont = font;
             this.Typeface = _textServices.ResolveTypeface(font); //resolve for 'actual' font 
             this.FontSizeInPoints = font.SizeInPoints;
         }
@@ -123,7 +120,7 @@ namespace PixelFarm.Drawing.Fonts
         {
 
 
-            if (this._reqFont == null)
+            if (_reqFont == null)
             {
                 //this.ScriptLang = canvasPainter.CurrentFont.GetOpenFontScriptLang();
                 ChangeFont(_painter.CurrentFont);
@@ -195,16 +192,14 @@ namespace PixelFarm.Drawing.Fonts
             //restore prev origin
             _painter.SetOrigin(ox, oy);
         }
-
-
-        public override void DrawFromGlyphPlans(GlyphPlanSequence seq, float x, float y)
+        public override void DrawFromGlyphPlans(GlyphPlanSequence seq, int startAt, int len, float left, float top)
         {
 
             if (StartDrawOnLeftTop)
             {
                 //version 2
                 //offset y down 
-                y += this.FontLineSpacingPx;
+                top += this.FontLineSpacingPx;
             }
 
             float fontSizePoint = this.FontSizeInPoints;
@@ -246,11 +241,16 @@ namespace PixelFarm.Drawing.Fonts
 
                 int seqLen = seq.Count;
 
-                var snapToPx = new GlyphPlanSequenceSnapPixelScaleLayout(seq, scale);
+                if (len > seqLen)
+                {
+                    len = seqLen;
+                }
+
+                var snapToPx = new GlyphPlanSequenceSnapPixelScaleLayout(seq, startAt, len, scale);
                 while (snapToPx.Read())
                 {
 
-                    _painter.SetOrigin((float)Math.Round(x + snapToPx.ExactX) + 0.33f, (float)Math.Floor(y + snapToPx.ExactY));
+                    _painter.SetOrigin((float)Math.Round(left + snapToPx.ExactX) + 0.33f, (float)Math.Floor(top + snapToPx.ExactY));
                     _painter.Fill(_glyphMeshStore.GetGlyphMesh(snapToPx.CurrentGlyphIndex));
                 }
 
@@ -267,11 +267,16 @@ namespace PixelFarm.Drawing.Fonts
                 Color originalFillColor = _painter.FillColor;
                 int seqLen = seq.Count;
 
-                var snapToPx = new GlyphPlanSequenceSnapPixelScaleLayout(seq, scale);
+                if (len > seqLen)
+                {
+                    len = seqLen;
+                }
+
+                var snapToPx = new GlyphPlanSequenceSnapPixelScaleLayout(seq, startAt, len, scale);
                 while (snapToPx.Read())
                 {
 
-                    _painter.SetOrigin((float)Math.Round(x + snapToPx.ExactX), (float)Math.Floor(y + snapToPx.ExactY));
+                    _painter.SetOrigin((float)Math.Round(left + snapToPx.ExactX), (float)Math.Floor(top + snapToPx.ExactY));
 
                     ushort colorLayerStart;
                     if (colrTable.LayerIndices.TryGetValue(snapToPx.CurrentGlyphIndex, out colorLayerStart))
@@ -279,6 +284,7 @@ namespace PixelFarm.Drawing.Fonts
                         //TODO: optimize this                        
                         //we found color info for this glyph 
                         ushort colorLayerCount = colrTable.LayerCounts[snapToPx.CurrentGlyphIndex];
+                        byte r, g, b, a;
                         for (int c = colorLayerStart; c < colorLayerStart + colorLayerCount; ++c)
                         {
                             ushort gIndex = colrTable.GlyphLayers[c];
@@ -286,7 +292,7 @@ namespace PixelFarm.Drawing.Fonts
                             int palette = 0; // FIXME: assume palette 0 for now 
                             cpalTable.GetColor(
                                 cpalTable.Palettes[palette] + colrTable.GlyphPalettes[c], //index
-                                out byte r, out byte g, out byte b, out byte a);
+                                out r, out g, out b, out a);
                             //-----------  
                             _painter.FillColor = new Color(r, g, b);//? a component
                             _painter.Fill(_glyphMeshStore.GetGlyphMesh(gIndex));
@@ -310,13 +316,22 @@ namespace PixelFarm.Drawing.Fonts
         }
 
 
-        public void DrawString(READ_ONLY_CHARS text, double x, double y) =>
-            DrawString(text, (float)x, (float)y);
-        public override void DrawString(READ_ONLY_CHARS textBuffer, float x, float y)
+        public void DrawString(char[] text, int startAt, int len, double x, double y)
+        {
+            InternalDrawString(text, startAt, len, (float)x, (float)y);
+        }
+        public override void DrawString(char[] textBuffer, int startAt, int len, float x, float y)
+        {
+            InternalDrawString(textBuffer, startAt, len, x, y);
+        }
+
+
+        void InternalDrawString(char[] buffer, int startAt, int len, float x, float y)
         {
             UpdateGlyphLayoutSettings();
             //unscale layout, with design unit scale
-            GlyphPlanSequence glyphPlanSeq = _textServices.CreateGlyphPlanSeq(textBuffer, _reqFont);
+            TextBufferSpan buffSpan = new TextBufferSpan(buffer, startAt, len);
+            GlyphPlanSequence glyphPlanSeq = _textServices.CreateGlyphPlanSeq(ref buffSpan, _reqFont);
             DrawFromGlyphPlans(glyphPlanSeq, x, y);
         }
     }

@@ -11,8 +11,6 @@ using Typography.TextLayout;
 using Typography.TextServices;
 using Typography.FontManagement;
 
-using READ_ONLY_CHARS = System.ReadOnlySpan<char>;
-
 namespace LayoutFarm
 {
 
@@ -25,7 +23,11 @@ namespace LayoutFarm
         TextServices _txtServices;
         Dictionary<int, Typeface> _resolvedTypefaceCache = new Dictionary<int, Typeface>();
         readonly int _system_id;
-        public OpenFontTextService()
+
+
+        public static Typography.OpenFont.ScriptLang DefaultScriptLang { get; set; }
+
+        public OpenFontTextService(Typography.OpenFont.ScriptLang scLang = null)
         {
             // 
             _system_id = PixelFarm.Drawing.Internal.RequestFontCacheAccess.GetNewCacheSystemId();
@@ -39,7 +41,7 @@ namespace LayoutFarm
                 collection.SetFontNameDuplicatedHandler((f0, f1) => FontNameDuplicatedDecision.Skip);
                 collection.LoadSystemFonts(); //load system fonts
             });
-            
+
 
             //create typography service
             //you can implement this service on your own
@@ -51,10 +53,23 @@ namespace LayoutFarm
             //user can set this to other choices...
             //eg. directly specific the script lang  
 
-            if (!TrySettingScriptLangFromCurrentThreadCultureInfo(_txtServices))
+
+            //set script-lang 
+            if (scLang == null)
             {
-                //TODO:
+                //use default
+                scLang = DefaultScriptLang;
             }
+            // if not default then try guess
+            if (scLang == null &&
+                !TryGetScriptLangFromCurrentThreadCultureInfo(out scLang))
+            {
+                //TODO: handle error here
+            }
+
+            _txtServices.SetDefaultScriptLang(scLang);
+            _txtServices.CurrentScriptLang = scLang;
+
             // ... or specific the scriptlang manully, eg. ...
             //_shapingServices.SetDefaultScriptLang(scLang);
             //_shapingServices.SetCurrentScriptLang(scLang);
@@ -66,21 +81,26 @@ namespace LayoutFarm
         {
             _txtServices.InstalledFontCollection.LoadFontsFromFolder(folder);
         }
-        static bool TrySettingScriptLangFromCurrentThreadCultureInfo(TextServices textservice)
+        static bool TryGetScriptLangFromCurrentThreadCultureInfo(out Typography.OpenFont.ScriptLang scLang)
         {
-            //accessory...
             var currentCulture = System.Threading.Thread.CurrentThread.CurrentCulture;
-            Typography.OpenFont.ScriptLang scLang = null;
-            string langFullName;
+            scLang = null;
             if (Typography.TextBreak.IcuData.TryGetFullLanguageNameFromLangCode(
                  currentCulture.TwoLetterISOLanguageName,
                  currentCulture.ThreeLetterISOLanguageName,
-                 out langFullName))
+                 out string langFullName))
             {
                 scLang = Typography.OpenFont.ScriptLangs.GetRegisteredScriptLangFromLanguageName(langFullName);
-                textservice.SetDefaultScriptLang(scLang);
-                textservice.CurrentScriptLang = scLang;
-                return true;
+                if (scLang == null)
+                {
+                    //not found -> use default latin
+                    //use default lang
+#if DEBUG
+                    System.Diagnostics.Debug.WriteLine(langFullName + " :use latin");
+#endif
+                    scLang = ScriptLangs.Latin;
+                    return true;
+                }
             }
             return false;
         }
@@ -90,12 +110,14 @@ namespace LayoutFarm
             get { return _txtServices.CurrentScriptLang; }
         }
 
-        public void CalculateUserCharGlyphAdvancePos(READ_ONLY_CHARS textBufferSpan, RequestFont font, int[] outputGlyphAdvances, out int outputTotalW, out int outputLineHeight)
+        public void CalculateUserCharGlyphAdvancePos(ref TextBufferSpan textBufferSpan, RequestFont font, int[] outputGlyphAdvances, out int outputTotalW, out int outputLineHeight)
         {
-            CalculateUserCharGlyphAdvancePos(textBufferSpan, this.BreakToLineSegments(textBufferSpan), font, outputGlyphAdvances, out outputTotalW, out outputLineHeight);
+            CalculateUserCharGlyphAdvancePos(ref textBufferSpan, this.BreakToLineSegments(ref textBufferSpan), font, outputGlyphAdvances, out outputTotalW, out outputLineHeight);
         }
 
-        public void CalculateUserCharGlyphAdvancePos(READ_ONLY_CHARS textBufferSpan,
+        ReusableTextBuffer _reusableTextBuffer = new ReusableTextBuffer();
+
+        public void CalculateUserCharGlyphAdvancePos(ref TextBufferSpan textBufferSpan,
             ILineSegmentList lineSegs, RequestFont font,
             int[] outputUserInputCharAdvance, out int outputTotalW, out int lineHeight)
         {
@@ -114,6 +136,8 @@ namespace LayoutFarm
             int j = mylineSegs.Count;
             int pos = 0; //start at 0
 
+            _reusableTextBuffer.SetRawCharBuffer(textBufferSpan.GetRawCharBuffer());
+
             for (int i = 0; i < j; ++i)
             {
 
@@ -128,8 +152,9 @@ namespace LayoutFarm
                 //
                 //we cache used line segment for a while
                 //we ask for caching context for a specific typeface and font size   
-                GlyphPlanSequence seq = _txtServices.GetUnscaledGlyphPlanSequence(
-                    textBufferSpan.Slice(lineSeg.StartAt, lineSeg.Length));
+                GlyphPlanSequence seq = _txtServices.GetUnscaledGlyphPlanSequence(_reusableTextBuffer,
+                     lineSeg.StartAt,
+                     lineSeg.Length);
 
 
                 //IMPORTANT
@@ -240,6 +265,8 @@ namespace LayoutFarm
             //
 
             lineHeight = (int)Math.Round(typeface.CalculateRecommendLineSpacing() * scale);
+
+            _reusableTextBuffer.SetRawCharBuffer(null);
         }
 
         public Typeface ResolveTypeface(RequestFont font)
@@ -284,38 +311,43 @@ namespace LayoutFarm
                 lineGapInPx,
                 recommedLineSpacingInPx);
 
+            TextBufferSpan w = new TextBufferSpan(new char[] { ' ' });
+            Size whiteSpaceW = MeasureString(ref w, font);
+            PixelFarm.Drawing.Internal.RequestFontCacheAccess.SetWhitespaceWidth(font, _system_id, whiteSpaceW.Width);
             return typeface;
         }
         public float MeasureWhitespace(RequestFont f)
         {
-            throw new NotImplementedException();
+            return PixelFarm.Drawing.Internal.RequestFontCacheAccess.GetWhitespaceWidth(f, _system_id);
         }
 
-        public GlyphPlanSequence CreateGlyphPlanSeq(READ_ONLY_CHARS textBufferSpan, RequestFont font)
+        public GlyphPlanSequence CreateGlyphPlanSeq(ref TextBufferSpan textBufferSpan, RequestFont font)
         {
 
             Typeface typeface = ResolveTypeface(font);
             _txtServices.SetCurrentFont(typeface, font.SizeInPoints);
 
-            return _txtServices.GetUnscaledGlyphPlanSequence(textBufferSpan);
+            _reusableTextBuffer.SetRawCharBuffer(textBufferSpan.GetRawCharBuffer());
+
+            return _txtServices.GetUnscaledGlyphPlanSequence(_reusableTextBuffer, textBufferSpan.start, textBufferSpan.len);
         }
-        public Size MeasureString(READ_ONLY_CHARS textBufferSpan, RequestFont font)
+        public Size MeasureString(ref TextBufferSpan textBufferSpan, RequestFont font)
         {
             Typeface typeface = ResolveTypeface(font);
             _txtServices.SetCurrentFont(typeface, font.SizeInPoints);
             int w, h;
 
             //
-            _txtServices.MeasureString(textBufferSpan, out w, out h);
+            _txtServices.MeasureString(textBufferSpan.GetRawCharBuffer(), textBufferSpan.start, textBufferSpan.len, out w, out h);
             return new Size(w, h);
         }
-        public void MeasureString(READ_ONLY_CHARS textBufferSpan, RequestFont font, int limitWidth, out int charFit, out int charFitWidth)
+        public void MeasureString(ref TextBufferSpan textBufferSpan, RequestFont font, int limitWidth, out int charFit, out int charFitWidth)
         {
             Typeface typeface = ResolveTypeface(font);
             _txtServices.SetCurrentFont(typeface, font.SizeInPoints);
 
             charFit = 0;
-            _txtServices.MeasureString(textBufferSpan, limitWidth, out charFit, out charFitWidth);
+            _txtServices.MeasureString(textBufferSpan.GetRawCharBuffer(), textBufferSpan.start, textBufferSpan.len, limitWidth, out charFit, out charFitWidth);
 
         }
         float ITextService.MeasureBlankLineHeight(RequestFont font)
@@ -359,9 +391,14 @@ namespace LayoutFarm
         class MyLineSegmentList : ILineSegmentList
         {
             MyLineSegment[] _segments;
-            
-            public MyLineSegmentList()
+
+            int _startAt;
+            int _len;
+            public MyLineSegmentList(int startAt, int len)
             {
+                //_str = str;
+                _startAt = startAt;
+                _len = len;
             }
             public ILineSegment this[int index]
             {
@@ -373,7 +410,7 @@ namespace LayoutFarm
             }
             public void SetResultLineSegments(MyLineSegment[] segments)
             {
-                this._segments = segments;
+                _segments = segments;
             }
             public MyLineSegment GetSegment(int index)
             {
@@ -382,20 +419,21 @@ namespace LayoutFarm
 
         }
         List<MyLineSegment> _resuableLineSegments = new List<MyLineSegment>();
-      
-        public ILineSegmentList BreakToLineSegments(READ_ONLY_CHARS str)
+
+        public ILineSegmentList BreakToLineSegments(ref TextBufferSpan textBufferSpan)
         {
             _resuableLineSegments.Clear();
 
             //a text buffer span is separated into multiple line segment list
 
-            MyLineSegmentList lineSegs = new MyLineSegmentList();
-            foreach (BreakSpan breakSpan in _txtServices.BreakToLineSegments(str))
+            char[] str = textBufferSpan.GetRawCharBuffer();
+
+            MyLineSegmentList lineSegs = new MyLineSegmentList(textBufferSpan.start, textBufferSpan.len);
+            int cur_startAt = textBufferSpan.start;
+            foreach (BreakSpan breakSpan in _txtServices.BreakToLineSegments(str, textBufferSpan.start, textBufferSpan.len))
             {
-                MyLineSegment lineSeg = new MyLineSegment(lineSegs, breakSpan.startAt, breakSpan.len)
-                {
-                    scriptLang = breakSpan.scLang
-                };
+                MyLineSegment lineSeg = new MyLineSegment(lineSegs, breakSpan.startAt, breakSpan.len);
+                lineSeg.scriptLang = breakSpan.scLang;
                 _resuableLineSegments.Add(lineSeg);
             }
 
