@@ -147,11 +147,11 @@ namespace PixelFarm.Drawing
         /// notify the bitmap provider that it can release the local bmp (eg. we have use it, not need anymore)
         /// </summary>
         public abstract void ReleaseLocalBitmapIfRequired();
-        public abstract void NotifyUsage(); 
-        public BitmapBufferFormat BitmapFormat { get; set; } 
+        public abstract void NotifyUsage();
+        public BitmapBufferFormat BitmapFormat { get; set; }
         public override bool IsReferenceImage => true;
         public override int ReferenceX => 0;
-        public override int ReferenceY => 0; 
+        public override int ReferenceY => 0;
     }
 
     public enum RenderQuality
@@ -228,22 +228,49 @@ namespace PixelFarm.Drawing
             drawBoard.SmoothingMode = value;
             return saveState;
         }
-
-        public struct SmoothingModeState
+        public static StrokeState SaveStroke(this DrawBoard drawBoard)
+        {
+            return new StrokeState(drawBoard);
+        }
+        public struct SmoothingModeState : System.IDisposable
         {
             readonly DrawBoard _drawBoard;
             readonly SmoothingMode _latestSmoothMode;
             internal SmoothingModeState(DrawBoard drawBoard, SmoothingMode state)
             {
                 _latestSmoothMode = state;
-                this._drawBoard = drawBoard;
+                _drawBoard = drawBoard;
             }
-            public void Restore()
+            public void Dispose()
             {
                 _drawBoard.SmoothingMode = _latestSmoothMode;
             }
         }
+        //--------------------------------------------------
+
+        public struct StrokeState : System.IDisposable
+        {
+            readonly DrawBoard _d;
+            readonly Color _stokeColor;
+            readonly float _strokeW;
+            public StrokeState(DrawBoard d)
+            {
+                _d = d;
+                _stokeColor = d.StrokeColor;
+                _strokeW = d.StrokeWidth;
+            }
+            public void Dispose()
+            {
+                _d.StrokeColor = _stokeColor;
+                _d.StrokeWidth = _strokeW;
+            }
+        }
+
+
     }
+
+
+
 
 }
 

@@ -65,9 +65,9 @@ namespace PixelFarm.CpuBlit.FragmentProcessing
         {
             _grad0X = _grad0Y = _xoffset = _yoffset = 0;//reset
 
-            this._interpolator = inter;
-            this._grValueCalculator = gvc;
-            this._colorsProvider = m_colorsProvider;
+            _interpolator = inter;
+            _grValueCalculator = gvc;
+            _colorsProvider = m_colorsProvider;
             _dist = AggMath.iround(distance * GR_SUBPIX_SCALE);
 
             if (_dist < 1)
@@ -177,12 +177,9 @@ namespace PixelFarm.CpuBlit.FragmentProcessing
 
         public LinearGradientColorsProvider() { }
 
-        public int GradientSteps { get { return _gradientSteps; } }
-        public Color GetColor(int v)
-        {
-            //get gradient color between c1 and c2 and specific step
-            return _c1.CreateGradient(_c2, (float)(v) / (float)(_gradientSteps - 1));
-        }
+        public int GradientSteps => _gradientSteps;
+        public Color GetColor(int v) => _c1.CreateGradient(_c2, (float)(v) / (float)(_gradientSteps - 1));
+        //get gradient color between c1 and c2 and specific step
 
         public void SetColors(Color c1, Color c2, int gradientSteps = 256)
         {

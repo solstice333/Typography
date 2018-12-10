@@ -41,22 +41,15 @@ namespace PixelFarm.CpuBlit.Imaging
 
         public TempMemPtr(IntPtr nativeBuffer32, int lenInBytes, bool isOwner = false)
         {
-            this._lenInBytes = lenInBytes;
+            _lenInBytes = lenInBytes;
             _nativeBuffer = nativeBuffer32;
             _isOwner = isOwner;
         }
-        public int LengthInBytes
-        {
-            get { return _lenInBytes; }
-        }
-
-        public IntPtr Ptr
-        {
-            get
-            {
-                return _nativeBuffer;
-            }
-        }
+        //
+        public int LengthInBytes => _lenInBytes;
+        //
+        public IntPtr Ptr => _nativeBuffer;
+        //
         public void Dispose()
         {
             if (_isOwner)
@@ -241,10 +234,10 @@ namespace PixelFarm.CpuBlit
         public MemBitmap(int width, int height, IntPtr externalNativeInt32Ptr)
         {
             //width and height must >0 
-            this._width = width;
-            this._height = height;
-            this._strideBytes = CalculateStride(width,
-                this._pixelFormat = CpuBlit.Imaging.PixelFormat.ARGB32, //***
+            _width = width;
+            _height = height;
+            _strideBytes = CalculateStride(width,
+                _pixelFormat = CpuBlit.Imaging.PixelFormat.ARGB32, //***
                 out _bitDepth,
                 out int bytesPerPixel);
 
@@ -267,37 +260,21 @@ namespace PixelFarm.CpuBlit
             }
         }
         public bool IsDisposed() => _isDisposed;
-        public override int Width
-        {
-            get { return this._width; }
-        }
-        public override int Height
-        {
-            get { return this._height; }
-        }
-        public override int ReferenceX
-        {
-            get { return 0; }
-        }
-        public override int ReferenceY
-        {
-            get { return 0; }
-        }
-        public RectInt Bounds
-        {
-            get { return new RectInt(0, 0, this._width, this._height); }
-        }
-        public override bool IsReferenceImage
-        {
-            get { return false; }
-        }
-
-        public CpuBlit.Imaging.PixelFormat PixelFormat { get { return this._pixelFormat; } }
-        public int Stride { get { return this._strideBytes; } }
-        public int BitDepth { get { return this._bitDepth; } }
+        //
+        public override int Width => _width;
+        public override int Height => _height;
+        //
+        public override int ReferenceX => 0;
+        public override int ReferenceY => 0;
+        //
+        public RectInt Bounds => new RectInt(0, 0, _width, _height);
+        public override bool IsReferenceImage => false;
+        public CpuBlit.Imaging.PixelFormat PixelFormat => _pixelFormat;
+        //
+        public int Stride => _strideBytes;
+        public int BitDepth => _bitDepth;
+        //
         public bool IsBigEndian { get; set; }
-
-
         public static CpuBlit.Imaging.TempMemPtr GetBufferPtr(MemBitmap bmp)
         {
             return new CpuBlit.Imaging.TempMemPtr(bmp._pixelBuffer, bmp._pixelBufferInBytes);
@@ -421,56 +398,21 @@ namespace PixelFarm.CpuBlit
 
             return buff2;
         }
-        int IBitmapSrc.BitDepth
-        {
-            get
-            {
-                return this._bitDepth;
-            }
-        }
-
-        int IBitmapSrc.Width
-        {
-            get
-            {
-                return this._width;
-            }
-        }
-
-        int IBitmapSrc.Height
-        {
-            get
-            {
-                return this._height;
-            }
-        }
-
-        int IBitmapSrc.Stride
-        {
-            get
-            {
-                return this._strideBytes;
-            }
-        }
-        int IBitmapSrc.BytesBetweenPixelsInclusive
-        {
-            get { return 4; }
-        }
-        RectInt IBitmapSrc.GetBounds()
-        {
-            return new RectInt(0, 0, _width, _height);
-        }
-
+        //
+        RectInt IBitmapSrc.GetBounds() => new RectInt(0, 0, _width, _height);
+        int IBitmapSrc.Width => _width;
+        int IBitmapSrc.Height => _height;
+        int IBitmapSrc.Stride => _strideBytes;
+        //
+        int IBitmapSrc.BytesBetweenPixelsInclusive => 4;
+        int IBitmapSrc.BitDepth => _bitDepth;
+        //
+        int IBitmapSrc.GetBufferOffsetXY32(int x, int y) => (y * _width) + x;
         CpuBlit.Imaging.TempMemPtr IBitmapSrc.GetBufferPtr()
         {
             return new CpuBlit.Imaging.TempMemPtr(_pixelBuffer, _pixelBufferInBytes);
         }
-
-        int IBitmapSrc.GetBufferOffsetXY32(int x, int y)
-        {
-            return (y * _width) + x;
-        }
-
+        //
         void IBitmapSrc.WriteBuffer(int[] newBuffer)
         {
             //TODO: review here 2018-08-26

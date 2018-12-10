@@ -128,7 +128,7 @@ namespace PixelFarm.CpuBlit.PixelProcessing
             this.OutputPixelBlender = outputPxBlender;
             //
 
-            this._raw_buffer32 = imgbuffer.Ptr;
+            _raw_buffer32 = imgbuffer.Ptr;
             _rawBufferLenInBytes = imgbuffer.LengthInBytes;
 
         }
@@ -139,10 +139,10 @@ namespace PixelFarm.CpuBlit.PixelProcessing
            int bitDepth,
            int distanceInBytesBetweenPixelsInclusive)
         {
-            this._width = width;
-            this._height = height;
-            this._strideInBytes = strideInBytes;
-            this._bitDepth = bitDepth;
+            _width = width;
+            _height = height;
+            _strideInBytes = strideInBytes;
+            _bitDepth = bitDepth;
 
             if (distanceInBytesBetweenPixelsInclusive > 4)
             {
@@ -284,7 +284,7 @@ namespace PixelFarm.CpuBlit.PixelProcessing
 
         public int BytesBetweenPixelsInclusive => _m_DistanceInBytesBetweenPixelsInclusive;
         public int BitDepth => _bitDepth;
-        public RectInt GetBounds() => new RectInt(0, 0, this._width, this._height);
+        public RectInt GetBounds() => new RectInt(0, 0, _width, _height);
 
         /// <summary>
         /// get, set blender of destination image buffer
@@ -296,7 +296,7 @@ namespace PixelFarm.CpuBlit.PixelProcessing
             set
             {
 #if DEBUG
-                if (BitDepth != 0 && value != null && PixelBlender32.NumPixelBits != BitDepth)
+                if (BitDepth != 0 && value != null && PixelBlender32.NUM_PIXEL_BITS != BitDepth)
                 {
                     throw new NotSupportedException("The blender has to support the bit depth of this image.");
                 }
