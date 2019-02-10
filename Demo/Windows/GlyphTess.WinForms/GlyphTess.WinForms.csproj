@@ -39,6 +39,9 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Numerics" />
+    <Reference Include="Util">
+      <HintPath>..\..\..\..\..\Util\Util\bin\Debug\Util.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\..\Typography.Contours\GlyphPathBuilderBase.cs">

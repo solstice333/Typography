@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.IO;
 using System.Windows.Forms;
+using Util;
 
 using Typography.OpenFont;
 
@@ -19,6 +20,23 @@ namespace Test_WinForm_TessGlyph {
         private int[] _contourEnds;
 
         TessTool _tessTool = new TessTool();
+
+        private static float[] TfmPoints(
+            float[] xy, Matrix tfmMat, int xAdj = 0, int yAdj = 0) {
+            var points = new List<PointF>();
+            for (int i = 0; i < xy.Length; i += 2)
+                points.Add(new PointF(xy[i], xy[i + 1]));
+            var pointsArr = points.ToArray();
+
+            tfmMat.TransformPoints(pointsArr);
+
+            var tfmXy = new List<float>();
+            foreach (var p in pointsArr) {
+                tfmXy.Add(p.X + xAdj);
+                tfmXy.Add(p.Y + yAdj);
+            }
+            return tfmXy.ToArray();
+        }
 
         private void PnlGlyph_Paint(
             object sender, System.Windows.Forms.PaintEventArgs e) {
@@ -77,22 +95,18 @@ namespace Test_WinForm_TessGlyph {
             return _glyphPoints2;
         }
 
-        void DrawOutput(Graphics graphics) {
-
-            //for GDI+ only
-            bool drawInvert = chkInvert.Checked;
-            int viewHeight = this.pnlGlyph.Height;
-            if (drawInvert) {
-                graphics.ScaleTransform(1, -1, MatrixOrder.Append);
-                graphics.TranslateTransform(0, viewHeight, MatrixOrder.Append);
-            }
-
-            //show tess
+        private void DrawOutput(Graphics graphics) {
             int[] contourEndIndices;
             float[] polygon1 = GetPolygonData(out contourEndIndices);
 
+            if (chkInvert.Checked) {
+                var tfm = new Matrix();
+                tfm.Scale(1, -1, MatrixOrder.Append);
+                tfm.Translate(0, pnlGlyph.Height, MatrixOrder.Append);
+                polygon1 = TfmPoints(polygon1, tfm, 0, -25);
+            }
+
             using (Pen pen1 = new Pen(Color.LightGray, 6)) {
-                int nn = polygon1.Length;
                 int a = 0;
                 PointF p0;
                 PointF p1;
@@ -124,17 +138,12 @@ namespace Test_WinForm_TessGlyph {
                 return;
             }
 
-            //1.
             List<ushort> indexList = _tessTool.TessIndexList;
-
-            //2.
             List<TessVertex2d> tempVertexList = _tessTool.TempVertexList;
-
-            //3.
             int vertexCount = indexList.Count;
 
             int orgVertexCount = polygon1.Length / 2;
-            float[] vtx = new float[vertexCount * 2];//***
+            float[] vtx = new float[vertexCount * 2];
             int n = 0;
 
             for (int p = 0; p < vertexCount; ++p) {
