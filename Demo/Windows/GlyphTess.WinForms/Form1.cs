@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.IO;
 using System.Windows.Forms;
 
@@ -82,8 +83,8 @@ namespace Test_WinForm_TessGlyph {
             bool drawInvert = chkInvert.Checked;
             int viewHeight = this.pnlGlyph.Height;
             if (drawInvert) {
-                graphics.ScaleTransform(1, -1);
-                graphics.TranslateTransform(0, -viewHeight);
+                graphics.ScaleTransform(1, -1, MatrixOrder.Append);
+                graphics.TranslateTransform(0, viewHeight, MatrixOrder.Append);
             }
 
             //show tess
