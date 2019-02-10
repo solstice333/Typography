@@ -51,6 +51,7 @@
             this.pnlGlyph.Name = "pnlGlyph";
             this.pnlGlyph.Size = new System.Drawing.Size(526, 362);
             this.pnlGlyph.TabIndex = 1;
+            this.pnlGlyph.Paint += PnlGlyph_Paint;
             // 
             // chkInvert
             // 
@@ -69,6 +70,7 @@
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(100, 20);
             this.textBox1.TabIndex = 3;
+            this.textBox1.KeyUp += new System.Windows.Forms.KeyEventHandler(this.TextBox1_KeyUp);
             // 
             // label1
             // 
