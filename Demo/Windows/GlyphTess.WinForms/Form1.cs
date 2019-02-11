@@ -95,17 +95,8 @@ namespace Test_WinForm_TessGlyph {
             return _glyphPoints2;
         }
 
-        private void DrawOutput(Graphics graphics) {
-            int[] contourEndIndices;
-            float[] polygon1 = GetPolygonData(out contourEndIndices);
-
-            if (chkInvert.Checked) {
-                var tfm = new Matrix();
-                tfm.Scale(1, -1, MatrixOrder.Append);
-                tfm.Translate(0, pnlGlyph.Height, MatrixOrder.Append);
-                polygon1 = TfmPoints(polygon1, tfm, 0, -25);
-            }
-
+        private void DrawOutline(
+            Graphics graphics, float[] polygon1, int[] contourEndIndices) {
             using (Pen pen1 = new Pen(Color.LightGray, 6)) {
                 int a = 0;
                 PointF p0;
@@ -133,7 +124,9 @@ namespace Test_WinForm_TessGlyph {
                     startAt = (endAt + 1) + 3;
                 }
             }
+        }
 
+        private void DrawTess(Graphics graphics, float[] polygon1) {
             if (!_tessTool.TessPolygon(polygon1, _contourEnds)) {
                 return;
             }
@@ -178,6 +171,21 @@ namespace Test_WinForm_TessGlyph {
 
             //for GDI+ only
             graphics.ResetTransform();
+        }
+
+        private void DrawOutput(Graphics graphics) {
+            int[] contourEndIndices;
+            float[] polygon1 = GetPolygonData(out contourEndIndices);
+
+            if (chkInvert.Checked) {
+                var tfm = new Matrix();
+                tfm.Scale(1, -1, MatrixOrder.Append);
+                tfm.Translate(0, pnlGlyph.Height, MatrixOrder.Append);
+                polygon1 = TfmPoints(polygon1, tfm, 0, -125);
+            }
+
+            DrawOutline(graphics, polygon1, contourEndIndices);
+            DrawTess(graphics, polygon1);
         }
     }
 }

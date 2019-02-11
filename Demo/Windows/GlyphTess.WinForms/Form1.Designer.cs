@@ -49,7 +49,7 @@
             // 
             this.pnlGlyph.Location = new System.Drawing.Point(7, 13);
             this.pnlGlyph.Name = "pnlGlyph";
-            this.pnlGlyph.Size = new System.Drawing.Size(526, 362);
+            this.pnlGlyph.Size = new System.Drawing.Size(526, 526);
             this.pnlGlyph.TabIndex = 1;
             this.pnlGlyph.Paint += PnlGlyph_Paint;
             // 
