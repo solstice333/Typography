@@ -77,7 +77,7 @@ namespace Test_WinForm_TessGlyph {
         }
 
         private void TextBox1_KeyUp(object sender, KeyEventArgs e) {
-            string text = this.textBox1.Text.Trim();
+            string text = textBox1.Text.Trim();
 
             if (string.IsNullOrEmpty(text))
                 return;
@@ -105,6 +105,12 @@ namespace Test_WinForm_TessGlyph {
             }
 
             pnlGlyph.Invalidate();
+        }
+
+        void TextSpeed_KeyUp(object sender, KeyEventArgs e) {
+            string text = textSpeed.Text.Trim();
+            try { speed = Int32.Parse(text); }
+            catch (FormatException) {}
         }
 
         private void Up_MouseUp(object sender, MouseEventArgs e) {
@@ -160,12 +166,12 @@ namespace Test_WinForm_TessGlyph {
         }
 
         public FormTess() {
-            InitializeComponent();
             mousePressed = false;
             task = null;
             xAdj = 0;
             yAdj = 0;
             speed = 5;
+            InitializeComponent();
         }
 
         private void FormTess_Load(object sender, EventArgs e) { }

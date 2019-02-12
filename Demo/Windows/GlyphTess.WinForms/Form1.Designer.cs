@@ -1,7 +1,6 @@
 ﻿namespace Test_WinForm_TessGlyph
 {
-    partial class FormTess
-    {
+    partial class FormTess {
         /// <summary>
         /// Required designer variable.
         /// </summary>
@@ -38,6 +37,8 @@
             this.down = new System.Windows.Forms.Button();
             this.left = new System.Windows.Forms.Button();
             this.right = new System.Windows.Forms.Button();
+            this.labelSpeed = new System.Windows.Forms.Label();
+            this.textSpeed = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // cmdDrawGlyph
@@ -90,12 +91,14 @@
             // 
             this.pnlTranslate.Location = new System.Drawing.Point(550, 180);
             this.pnlTranslate.Name = "pnlGlyph";
-            this.pnlTranslate.Size = new System.Drawing.Size(100, 100);
+            this.pnlTranslate.Size = new System.Drawing.Size(100, 200);
             this.pnlTranslate.TabIndex = 5;
             this.pnlTranslate.Controls.Add(up);
             this.pnlTranslate.Controls.Add(down);
             this.pnlTranslate.Controls.Add(left);
             this.pnlTranslate.Controls.Add(right);
+            this.pnlTranslate.Controls.Add(labelSpeed);
+            this.pnlTranslate.Controls.Add(textSpeed);
             // 
             // up
             // 
@@ -141,6 +144,24 @@
             this.right.MouseUp += Right_MouseUp;
             this.right.MouseDown += Right_MouseDown;
             // 
+            // labelSpeed
+            // 
+            this.labelSpeed.AutoSize = true;
+            this.labelSpeed.Location = new System.Drawing.Point(0, 100);
+            this.labelSpeed.Name = "labelSpeed";
+            this.labelSpeed.Size = new System.Drawing.Size(64, 13);
+            this.labelSpeed.TabIndex = 10;
+            this.labelSpeed.Text = "Speed:";
+            // 
+            // textSpeed
+            // 
+            this.textSpeed.Location = new System.Drawing.Point(0, 120);
+            this.textSpeed.Name = "speedText";
+            this.textSpeed.Size = new System.Drawing.Size(100, 20);
+            this.textSpeed.TabIndex = 11;
+            this.textSpeed.Text = speed.ToString();
+            this.textSpeed.KeyUp += TextSpeed_KeyUp;
+            // 
             // FormTess
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -173,6 +194,8 @@
         private System.Windows.Forms.Button down;
         private System.Windows.Forms.Button left;
         private System.Windows.Forms.Button right;
+        private System.Windows.Forms.Label labelSpeed;
+        private System.Windows.Forms.TextBox textSpeed;
     }
 }
 
