@@ -39,6 +39,8 @@
             this.right = new System.Windows.Forms.Button();
             this.labelSpeed = new System.Windows.Forms.Label();
             this.textSpeed = new System.Windows.Forms.TextBox();
+            this.statusStripOffset = new System.Windows.Forms.StatusStrip();
+            this.toolStripStatusLabelOffset = new System.Windows.Forms.ToolStripStatusLabel();
             this.SuspendLayout();
             // 
             // cmdDrawGlyph
@@ -89,9 +91,9 @@
             // 
             // pnlTranslate
             // 
-            this.pnlTranslate.Location = new System.Drawing.Point(550, 180);
+            this.pnlTranslate.Location = new System.Drawing.Point(550, 225);
             this.pnlTranslate.Name = "pnlGlyph";
-            this.pnlTranslate.Size = new System.Drawing.Size(100, 200);
+            this.pnlTranslate.Size = new System.Drawing.Size(150, 200);
             this.pnlTranslate.TabIndex = 5;
             this.pnlTranslate.Controls.Add(up);
             this.pnlTranslate.Controls.Add(down);
@@ -99,6 +101,7 @@
             this.pnlTranslate.Controls.Add(right);
             this.pnlTranslate.Controls.Add(labelSpeed);
             this.pnlTranslate.Controls.Add(textSpeed);
+            this.pnlTranslate.Controls.Add(statusStripOffset);
             // 
             // up
             // 
@@ -162,6 +165,30 @@
             this.textSpeed.Text = speed.ToString();
             this.textSpeed.KeyUp += TextSpeed_KeyUp;
             // 
+            // statusStripOffset
+            // 
+            statusStripOffset.AutoSize = true;
+            statusStripOffset.Dock = System.Windows.Forms.DockStyle.Bottom;
+            statusStripOffset.GripStyle = System.Windows.Forms.ToolStripGripStyle.Visible;
+            statusStripOffset.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+                toolStripStatusLabelOffset });
+            statusStripOffset.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Table;
+            statusStripOffset.Location = new System.Drawing.Point(0, 160);
+            statusStripOffset.Name = "statusStripOffset";
+            statusStripOffset.Size = new System.Drawing.Size(100, 50);
+            statusStripOffset.ShowItemToolTips = false;
+            statusStripOffset.SizingGrip = false;
+            statusStripOffset.Stretch = false;
+            statusStripOffset.TabIndex = 0;
+            statusStripOffset.Text = "statusStripOffset";
+            // 
+            // toolStripStatusLabelOffset
+            // 
+            this.toolStripStatusLabelOffset.AutoSize = true;
+            this.toolStripStatusLabelOffset.Name = "toolStripStatusLabelOffset";
+            this.toolStripStatusLabelOffset.Size = new System.Drawing.Size(100, 10);
+            this.toolStripStatusLabelOffset.Text = $"Offset: ({xAdj},{yAdj})";
+            // 
             // FormTess
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -178,7 +205,6 @@
             this.Load += new System.EventHandler(this.FormTess_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
         #endregion
@@ -196,6 +222,8 @@
         private System.Windows.Forms.Button right;
         private System.Windows.Forms.Label labelSpeed;
         private System.Windows.Forms.TextBox textSpeed;
+        private System.Windows.Forms.StatusStrip statusStripOffset;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelOffset;
     }
 }
 

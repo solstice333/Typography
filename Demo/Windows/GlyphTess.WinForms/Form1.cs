@@ -60,6 +60,10 @@ namespace Test_WinForm_TessGlyph {
             }
         }
 
+        private void UpdateToolStripStatusLabelOffset() {
+            toolStripStatusLabelOffset.Text = $"Offset: ({xAdj},{yAdj})";
+        }
+
         private void PnlGlyph_Paint(
             object sender, PaintEventArgs e) {
             var graphics = e.Graphics;
@@ -123,6 +127,7 @@ namespace Test_WinForm_TessGlyph {
             task = MouseAction(() => {
                 yAdj -= speed;
                 pnlGlyph.Invalidate();
+                UpdateToolStripStatusLabelOffset();
             });
         }
 
@@ -136,6 +141,7 @@ namespace Test_WinForm_TessGlyph {
             task = MouseAction(() => {
                 yAdj += speed;
                 pnlGlyph.Invalidate();
+                UpdateToolStripStatusLabelOffset();
             });
         }
 
@@ -149,6 +155,7 @@ namespace Test_WinForm_TessGlyph {
             task = MouseAction(() => {
                 xAdj -= speed;
                 pnlGlyph.Invalidate();
+                UpdateToolStripStatusLabelOffset();
             });
         }
 
@@ -162,6 +169,7 @@ namespace Test_WinForm_TessGlyph {
             task = MouseAction(() => {
                 xAdj += speed;
                 pnlGlyph.Invalidate();
+                UpdateToolStripStatusLabelOffset();
             });
         }
 
