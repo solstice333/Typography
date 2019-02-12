@@ -27,9 +27,13 @@
         /// </summary>
         private void InitializeComponent()
         {
+            int tabIdx = 0;
+
             this.cmdDrawGlyph = new System.Windows.Forms.Button();
             this.pnlGlyph = new System.Windows.Forms.Panel();
             this.chkInvert = new System.Windows.Forms.CheckBox();
+            this.labelTtf = new System.Windows.Forms.Label();
+            this.textBoxTtf = new System.Windows.Forms.TextBox();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.pnlTranslate = new System.Windows.Forms.Panel();
@@ -48,7 +52,7 @@
             this.cmdDrawGlyph.Location = new System.Drawing.Point(539, 13);
             this.cmdDrawGlyph.Name = "cmdDrawGlyph";
             this.cmdDrawGlyph.Size = new System.Drawing.Size(144, 39);
-            this.cmdDrawGlyph.TabIndex = 0;
+            this.cmdDrawGlyph.TabIndex = tabIdx++;
             this.cmdDrawGlyph.Text = "DrawGlyph";
             this.cmdDrawGlyph.UseVisualStyleBackColor = true;
             this.cmdDrawGlyph.Click += new System.EventHandler(this.cmdDrawGlyph_Click);
@@ -58,7 +62,7 @@
             this.pnlGlyph.Location = new System.Drawing.Point(7, 13);
             this.pnlGlyph.Name = "pnlGlyph";
             this.pnlGlyph.Size = new System.Drawing.Size(526, 526);
-            this.pnlGlyph.TabIndex = 1;
+            this.pnlGlyph.TabIndex = tabIdx++;
             this.pnlGlyph.Paint += PnlGlyph_Paint;
             // 
             // chkInvert
@@ -67,26 +71,44 @@
             this.chkInvert.Location = new System.Drawing.Point(540, 59);
             this.chkInvert.Name = "chkInvert";
             this.chkInvert.Size = new System.Drawing.Size(53, 17);
-            this.chkInvert.TabIndex = 2;
+            this.chkInvert.TabIndex = tabIdx++;
             this.chkInvert.Text = "Invert";
             this.chkInvert.UseVisualStyleBackColor = true;
             this.chkInvert.CheckedChanged += new System.EventHandler(this.chkInvert_CheckedChanged);
             // 
+            // textBoxTtf
+            // 
+            this.textBoxTtf.Location = new System.Drawing.Point(540, 110);
+            this.textBoxTtf.Name = "textBoxTtf";
+            this.textBoxTtf.Size = new System.Drawing.Size(400, 20);
+            this.textBoxTtf.TabIndex = tabIdx++;
+            this.textBoxTtf.KeyUp += TextBoxTtf_KeyUp;
+            this.textBoxTtf.Text = ttfPath;
+            // 
+            // labelTtf
+            // 
+            this.labelTtf.AutoSize = true;
+            this.labelTtf.Location = new System.Drawing.Point(540, 90);
+            this.labelTtf.Name = "labelTtf";
+            this.labelTtf.Size = new System.Drawing.Size(64, 13);
+            this.labelTtf.TabIndex = tabIdx++;
+            this.labelTtf.Text = "TTF Path:";
+            // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(540, 138);
+            this.textBox1.Location = new System.Drawing.Point(540, 160);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(100, 20);
-            this.textBox1.TabIndex = 3;
+            this.textBox1.TabIndex = tabIdx++;
             this.textBox1.KeyUp += new System.Windows.Forms.KeyEventHandler(this.TextBox1_KeyUp);
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(540, 119);
+            this.label1.Location = new System.Drawing.Point(540, 140);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(64, 13);
-            this.label1.TabIndex = 4;
+            this.label1.TabIndex = tabIdx++;
             this.label1.Text = "Single Char:";
             // 
             // pnlTranslate
@@ -94,7 +116,7 @@
             this.pnlTranslate.Location = new System.Drawing.Point(550, 225);
             this.pnlTranslate.Name = "pnlGlyph";
             this.pnlTranslate.Size = new System.Drawing.Size(150, 200);
-            this.pnlTranslate.TabIndex = 5;
+            this.pnlTranslate.TabIndex = tabIdx++;
             this.pnlTranslate.Controls.Add(up);
             this.pnlTranslate.Controls.Add(down);
             this.pnlTranslate.Controls.Add(left);
@@ -108,7 +130,7 @@
             this.up.Location = new System.Drawing.Point(38, 10);
             this.up.Name = "up";
             this.up.Size = new System.Drawing.Size(25, 25);
-            this.up.TabIndex = 6;
+            this.up.TabIndex = tabIdx++;
             this.up.Text = "^";
             this.up.UseVisualStyleBackColor = true;
             this.up.MouseUp += Up_MouseUp;
@@ -119,7 +141,7 @@
             this.down.Location = new System.Drawing.Point(38, 65);
             this.down.Name = "down";
             this.down.Size = new System.Drawing.Size(25, 25);
-            this.down.TabIndex = 7;
+            this.down.TabIndex = tabIdx++;
             this.down.Text = "v";
             this.down.UseVisualStyleBackColor = true;
             this.down.MouseUp += Down_MouseUp;
@@ -130,7 +152,7 @@
             this.left.Location = new System.Drawing.Point(10, 38);
             this.left.Name = "left";
             this.left.Size = new System.Drawing.Size(25, 25);
-            this.left.TabIndex = 8;
+            this.left.TabIndex = tabIdx++;
             this.left.Text = "<";
             this.left.UseVisualStyleBackColor = true;
             this.left.MouseUp += Left_MouseUp;
@@ -141,7 +163,7 @@
             this.right.Location = new System.Drawing.Point(65, 38);
             this.right.Name = "right";
             this.right.Size = new System.Drawing.Size(25, 25);
-            this.right.TabIndex = 9;
+            this.right.TabIndex = tabIdx++;
             this.right.Text = ">";
             this.right.UseVisualStyleBackColor = true;
             this.right.MouseUp += Right_MouseUp;
@@ -153,7 +175,7 @@
             this.labelSpeed.Location = new System.Drawing.Point(0, 100);
             this.labelSpeed.Name = "labelSpeed";
             this.labelSpeed.Size = new System.Drawing.Size(64, 13);
-            this.labelSpeed.TabIndex = 10;
+            this.labelSpeed.TabIndex = tabIdx++;
             this.labelSpeed.Text = "Speed:";
             // 
             // textSpeed
@@ -161,7 +183,7 @@
             this.textSpeed.Location = new System.Drawing.Point(0, 120);
             this.textSpeed.Name = "speedText";
             this.textSpeed.Size = new System.Drawing.Size(100, 20);
-            this.textSpeed.TabIndex = 11;
+            this.textSpeed.TabIndex = tabIdx++;
             this.textSpeed.Text = speed.ToString();
             this.textSpeed.KeyUp += TextSpeed_KeyUp;
             // 
@@ -179,7 +201,7 @@
             statusStripOffset.ShowItemToolTips = false;
             statusStripOffset.SizingGrip = false;
             statusStripOffset.Stretch = false;
-            statusStripOffset.TabIndex = 0;
+            statusStripOffset.TabIndex = tabIdx++;
             statusStripOffset.Text = "statusStripOffset";
             // 
             // toolStripStatusLabelOffset
@@ -193,9 +215,11 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(695, 550);
+            this.ClientSize = new System.Drawing.Size(1000, 550);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.labelTtf);
+            this.Controls.Add(this.textBoxTtf);
             this.Controls.Add(this.chkInvert);
             this.Controls.Add(this.pnlGlyph);
             this.Controls.Add(this.cmdDrawGlyph);
@@ -212,6 +236,9 @@
         private System.Windows.Forms.Button cmdDrawGlyph;
         private System.Windows.Forms.Panel pnlGlyph;
         private System.Windows.Forms.CheckBox chkInvert;
+
+        private System.Windows.Forms.TextBox textBoxTtf;
+        private System.Windows.Forms.Label labelTtf;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Label label1;
 

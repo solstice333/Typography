@@ -29,6 +29,9 @@ namespace Test_WinForm_TessGlyph {
         private int yAdj;
         private int speed;
 
+        private string ttfPath;
+        private char glyph;
+
         TessTool _tessTool = new TessTool();
 
         private static float[] TfmPoints(
@@ -64,6 +67,41 @@ namespace Test_WinForm_TessGlyph {
             toolStripStatusLabelOffset.Text = $"Offset: ({xAdj},{yAdj})";
         }
 
+        private bool IsGlyphPointsAndCountoursDefined() {
+            return _glyphPoints2 != null && _contourEnds != null;
+        }
+
+        private void ClearGlyphData() {
+            _glyphPoints2 = null;
+            _contourEnds = null;
+        }
+
+        private void InitGlyphPointsAndContourEnds(char c) {
+            try {
+                using (FileStream fs = File.OpenRead(ttfPath)) {
+                    OpenFontReader reader = new OpenFontReader();
+                    Typeface typeface = reader.Read(fs);
+
+                    var builder = new GlyphPathBuilder(typeface);
+                    builder.BuildFromGlyphIndex(typeface.LookupIndex(c), 300);
+
+                    var txToPath = new GlyphTranslatorToPath();
+                    var writablePath = new WritablePath();
+                    txToPath.SetOutput(writablePath);
+                    builder.ReadShapes(txToPath);
+
+                    var curveFlattener = new SimpleCurveFlattener();
+                    float[] flattenPoints = curveFlattener.Flatten(
+                        writablePath._points, out _contourEnds);
+                    _glyphPoints2 = flattenPoints;
+                }
+            }
+            catch (Exception) {
+                ClearGlyphData();
+                pnlGlyph.Invalidate();
+            }
+        }
+
         private void PnlGlyph_Paint(
             object sender, PaintEventArgs e) {
             var graphics = e.Graphics;
@@ -80,38 +118,33 @@ namespace Test_WinForm_TessGlyph {
             pnlGlyph.Invalidate();
         }
 
-        private void TextBox1_KeyUp(object sender, KeyEventArgs e) {
-            string text = textBox1.Text.Trim();
-
-            if (string.IsNullOrEmpty(text))
-                return;
-
-            string testFont = Path.GetFullPath(Path.Combine(
-                "..", "..", "..", "TestFonts", "Alef-Bold.ttf"));
-
-            using (FileStream fs = File.OpenRead(testFont)) {
-                OpenFontReader reader = new OpenFontReader();
-                Typeface typeface = reader.Read(fs);
-
-                var builder = new GlyphPathBuilder(typeface);
-                builder.BuildFromGlyphIndex(
-                    typeface.LookupIndex(text[0]), 300);
-
-                var txToPath = new GlyphTranslatorToPath();
-                var writablePath = new WritablePath();
-                txToPath.SetOutput(writablePath);
-                builder.ReadShapes(txToPath);
-
-                var curveFlattener = new SimpleCurveFlattener();
-                float[] flattenPoints = curveFlattener.Flatten(
-                    writablePath._points, out _contourEnds);
-                _glyphPoints2 = flattenPoints;
+        private void TextBoxTtf_KeyUp(object sender, KeyEventArgs e) {
+            string path = textBoxTtf.Text.Trim();
+            try {
+                path = Path.GetFullPath(path);
+                if (!File.Exists(path))
+                    throw new FileNotFoundException();
             }
-
+            catch (Exception) {
+                ClearGlyphData();
+                pnlGlyph.Invalidate();
+                return; 
+            }
+            ttfPath = path;
+            InitGlyphPointsAndContourEnds(glyph);
             pnlGlyph.Invalidate();
         }
 
-        void TextSpeed_KeyUp(object sender, KeyEventArgs e) {
+        private void TextBox1_KeyUp(object sender, KeyEventArgs e) {
+            string text = textBox1.Text.Trim();
+            if (string.IsNullOrEmpty(text))
+                return;
+            glyph = text[0];
+            InitGlyphPointsAndContourEnds(glyph);
+            pnlGlyph.Invalidate();
+        }
+
+        private void TextSpeed_KeyUp(object sender, KeyEventArgs e) {
             string text = textSpeed.Text.Trim();
             try { speed = Int32.Parse(text); }
             catch (FormatException) {}
@@ -171,15 +204,6 @@ namespace Test_WinForm_TessGlyph {
                 pnlGlyph.Invalidate();
                 UpdateToolStripStatusLabelOffset();
             });
-        }
-
-        public FormTess() {
-            mousePressed = false;
-            task = null;
-            xAdj = 0;
-            yAdj = 0;
-            speed = 5;
-            InitializeComponent();
         }
 
         private void FormTess_Load(object sender, EventArgs e) { }
@@ -269,6 +293,10 @@ namespace Test_WinForm_TessGlyph {
 
         private void DrawOutput(Graphics graphics) {
             int[] contourEndIndices;
+
+            if (!IsGlyphPointsAndCountoursDefined())
+                return;
+
             float[] polygon1 = GetPolygonData(out contourEndIndices);
             var tfm = new Matrix();
 
@@ -277,9 +305,21 @@ namespace Test_WinForm_TessGlyph {
                 tfm.Translate(0, pnlGlyph.Height, MatrixOrder.Append);
             }
             polygon1 = TfmPoints(polygon1, tfm, xAdj, yAdj);
-
             DrawOutline(graphics, polygon1, contourEndIndices);
             DrawTess(graphics, polygon1);
+        }
+
+        public FormTess() {
+            mousePressed = false;
+            task = null;
+            xAdj = 0;
+            yAdj = 0;
+            speed = 5;
+            ttfPath = Path.GetFullPath(Path.Combine(
+                "..", "..", "..", "TestFonts", "Alef-Bold.ttf"));
+            _glyphPoints2 = null;
+            _contourEnds = null;
+            InitializeComponent();
         }
     }
 }
