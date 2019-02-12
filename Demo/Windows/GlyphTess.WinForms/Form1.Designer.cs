@@ -33,6 +33,11 @@
             this.chkInvert = new System.Windows.Forms.CheckBox();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.pnlTranslate = new System.Windows.Forms.Panel();
+            this.up = new System.Windows.Forms.Button();
+            this.down = new System.Windows.Forms.Button();
+            this.left = new System.Windows.Forms.Button();
+            this.right = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // cmdDrawGlyph
@@ -81,16 +86,72 @@
             this.label1.TabIndex = 4;
             this.label1.Text = "Single Char:";
             // 
+            // pnlTranslate
+            // 
+            this.pnlTranslate.Location = new System.Drawing.Point(550, 180);
+            this.pnlTranslate.Name = "pnlGlyph";
+            this.pnlTranslate.Size = new System.Drawing.Size(100, 100);
+            this.pnlTranslate.TabIndex = 5;
+            this.pnlTranslate.Controls.Add(up);
+            this.pnlTranslate.Controls.Add(down);
+            this.pnlTranslate.Controls.Add(left);
+            this.pnlTranslate.Controls.Add(right);
+            // 
+            // up
+            // 
+            this.up.Location = new System.Drawing.Point(38, 10);
+            this.up.Name = "up";
+            this.up.Size = new System.Drawing.Size(25, 25);
+            this.up.TabIndex = 6;
+            this.up.Text = "^";
+            this.up.UseVisualStyleBackColor = true;
+            this.up.MouseUp += Up_MouseUp;
+            this.up.MouseDown += Up_MouseDown;
+            // 
+            // down
+            // 
+            this.down.Location = new System.Drawing.Point(38, 65);
+            this.down.Name = "down";
+            this.down.Size = new System.Drawing.Size(25, 25);
+            this.down.TabIndex = 7;
+            this.down.Text = "v";
+            this.down.UseVisualStyleBackColor = true;
+            this.down.MouseUp += Down_MouseUp;
+            this.down.MouseDown += Down_MouseDown;
+            // 
+            // left
+            // 
+            this.left.Location = new System.Drawing.Point(10, 38);
+            this.left.Name = "left";
+            this.left.Size = new System.Drawing.Size(25, 25);
+            this.left.TabIndex = 8;
+            this.left.Text = "<";
+            this.left.UseVisualStyleBackColor = true;
+            this.left.MouseUp += Left_MouseUp;
+            this.left.MouseDown += Left_MouseDown;
+            // 
+            // right
+            // 
+            this.right.Location = new System.Drawing.Point(65, 38);
+            this.right.Name = "right";
+            this.right.Size = new System.Drawing.Size(25, 25);
+            this.right.TabIndex = 9;
+            this.right.Text = ">";
+            this.right.UseVisualStyleBackColor = true;
+            this.right.MouseUp += Right_MouseUp;
+            this.right.MouseDown += Right_MouseDown;
+            // 
             // FormTess
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(695, 387);
+            this.ClientSize = new System.Drawing.Size(695, 550);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.chkInvert);
             this.Controls.Add(this.pnlGlyph);
             this.Controls.Add(this.cmdDrawGlyph);
+            this.Controls.Add(this.pnlTranslate);
             this.Name = "FormTess";
             this.Text = "FormTess";
             this.Load += new System.EventHandler(this.FormTess_Load);
@@ -106,6 +167,12 @@
         private System.Windows.Forms.CheckBox chkInvert;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Label label1;
+
+        private System.Windows.Forms.Panel pnlTranslate;
+        private System.Windows.Forms.Button up;
+        private System.Windows.Forms.Button down;
+        private System.Windows.Forms.Button left;
+        private System.Windows.Forms.Button right;
     }
 }
 

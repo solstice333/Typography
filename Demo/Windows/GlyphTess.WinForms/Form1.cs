@@ -5,9 +5,11 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.IO;
 using System.Windows.Forms;
+using System.Threading.Tasks;
 using Util;
 
 using Typography.OpenFont;
+using Typography.Contours;
 
 using DrawingGL;
 using DrawingGL.Text;
@@ -16,8 +18,16 @@ using Tesselate;
 
 namespace Test_WinForm_TessGlyph {
     public partial class FormTess : Form {
+        private static readonly object mousePressLock = new object();
+        private bool mousePressed;
+        private Task task;
+
         private float[] _glyphPoints2;
         private int[] _contourEnds;
+
+        private int xAdj;
+        private int yAdj;
+        private int speed;
 
         TessTool _tessTool = new TessTool();
 
@@ -38,38 +48,24 @@ namespace Test_WinForm_TessGlyph {
             return tfmXy.ToArray();
         }
 
-        private void PnlGlyph_Paint(
-            object sender, System.Windows.Forms.PaintEventArgs e) {
-            var graphics = e.Graphics;
-
-            graphics.Clear(Color.White);
-
-            string oneChar = this.textBox1.Text.Trim();
-            if (string.IsNullOrEmpty(oneChar))
-                return;
-            char selectedChar = oneChar[0];
-
-            string testFont = Path.GetFullPath(Path.Combine(
-                "..", "..", "..", "TestFonts", "Alef-Bold.ttf"));
-
-            using (FileStream fs = File.OpenRead(testFont)) {
-                OpenFontReader reader = new OpenFontReader();
-                Typeface typeface = reader.Read(fs);
-
-                var builder = new Typography.Contours.GlyphPathBuilder(typeface);
-                builder.BuildFromGlyphIndex(typeface.LookupIndex(selectedChar), 300);
-
-                var txToPath = new GlyphTranslatorToPath();
-                var writablePath = new WritablePath();
-                txToPath.SetOutput(writablePath);
-                builder.ReadShapes(txToPath);
-
-                var curveFlattener = new SimpleCurveFlattener();
-                float[] flattenPoints = curveFlattener.Flatten(writablePath._points, out _contourEnds);
-                _glyphPoints2 = flattenPoints;
-
-                DrawOutput(graphics);
+        private async Task MouseAction(Action action) {
+            while (true) {
+                lock (mousePressLock) {
+                    if (mousePressed)
+                        action();
+                    else
+                        break;
+                }
+                await Task.Delay(100).ConfigureAwait(false);
             }
+        }
+
+        private void PnlGlyph_Paint(
+            object sender, PaintEventArgs e) {
+            var graphics = e.Graphics;
+            graphics.Clear(Color.White);
+            if (!string.IsNullOrEmpty(textBox1.Text.Trim()))
+                DrawOutput(graphics);
         }
 
         private void cmdDrawGlyph_Click(object sender, EventArgs e) {
@@ -81,16 +77,100 @@ namespace Test_WinForm_TessGlyph {
         }
 
         private void TextBox1_KeyUp(object sender, KeyEventArgs e) {
+            string text = this.textBox1.Text.Trim();
+
+            if (string.IsNullOrEmpty(text))
+                return;
+
+            string testFont = Path.GetFullPath(Path.Combine(
+                "..", "..", "..", "TestFonts", "Alef-Bold.ttf"));
+
+            using (FileStream fs = File.OpenRead(testFont)) {
+                OpenFontReader reader = new OpenFontReader();
+                Typeface typeface = reader.Read(fs);
+
+                var builder = new GlyphPathBuilder(typeface);
+                builder.BuildFromGlyphIndex(
+                    typeface.LookupIndex(text[0]), 300);
+
+                var txToPath = new GlyphTranslatorToPath();
+                var writablePath = new WritablePath();
+                txToPath.SetOutput(writablePath);
+                builder.ReadShapes(txToPath);
+
+                var curveFlattener = new SimpleCurveFlattener();
+                float[] flattenPoints = curveFlattener.Flatten(
+                    writablePath._points, out _contourEnds);
+                _glyphPoints2 = flattenPoints;
+            }
+
             pnlGlyph.Invalidate();
+        }
+
+        private void Up_MouseUp(object sender, MouseEventArgs e) {
+            lock (mousePressLock) { mousePressed = false; }
+            task.Wait();
+        }
+
+        private void Up_MouseDown(object sender, MouseEventArgs e) {
+            lock (mousePressLock) { mousePressed = true; }
+            task = MouseAction(() => {
+                yAdj -= speed;
+                pnlGlyph.Invalidate();
+            });
+        }
+
+        private void Down_MouseUp(object sender, MouseEventArgs e) {
+            lock (mousePressLock) { mousePressed = false; }
+            task.Wait();
+        }
+
+        private void Down_MouseDown(object sender, MouseEventArgs e) {
+            lock (mousePressLock) { mousePressed = true; }
+            task = MouseAction(() => {
+                yAdj += speed;
+                pnlGlyph.Invalidate();
+            });
+        }
+
+        private void Left_MouseUp(object sender, MouseEventArgs e) {
+            lock (mousePressLock) { mousePressed = false; }
+            task.Wait();
+        }
+
+        private void Left_MouseDown(object sender, MouseEventArgs e) {
+            lock (mousePressLock) { mousePressed = true; }
+            task = MouseAction(() => {
+                xAdj -= speed;
+                pnlGlyph.Invalidate();
+            });
+        }
+
+        private void Right_MouseUp(object sender, MouseEventArgs e) {
+            lock (mousePressLock) { mousePressed = false; }
+            task.Wait();
+        }
+
+        private void Right_MouseDown(object sender, MouseEventArgs e) {
+            lock (mousePressLock) { mousePressed = true; }
+            task = MouseAction(() => {
+                xAdj += speed;
+                pnlGlyph.Invalidate();
+            });
         }
 
         public FormTess() {
             InitializeComponent();
+            mousePressed = false;
+            task = null;
+            xAdj = 0;
+            yAdj = 0;
+            speed = 5;
         }
 
         private void FormTess_Load(object sender, EventArgs e) { }
 
-        float[] GetPolygonData(out int[] endContours) {
+        private float[] GetPolygonData(out int[] endContours) {
             endContours = _contourEnds;
             return _glyphPoints2;
         }
@@ -176,13 +256,13 @@ namespace Test_WinForm_TessGlyph {
         private void DrawOutput(Graphics graphics) {
             int[] contourEndIndices;
             float[] polygon1 = GetPolygonData(out contourEndIndices);
+            var tfm = new Matrix();
 
             if (chkInvert.Checked) {
-                var tfm = new Matrix();
                 tfm.Scale(1, -1, MatrixOrder.Append);
                 tfm.Translate(0, pnlGlyph.Height, MatrixOrder.Append);
-                polygon1 = TfmPoints(polygon1, tfm, 0, -125);
             }
+            polygon1 = TfmPoints(polygon1, tfm, xAdj, yAdj);
 
             DrawOutline(graphics, polygon1, contourEndIndices);
             DrawTess(graphics, polygon1);
