@@ -133,7 +133,8 @@ namespace DrawingGL
 
         public TextRun()
         {
-
+            typeface = null;
+            sizeInPoints = 0;
         }
         public void AddGlyph(GlyphRun glyph)
         {

@@ -6,7 +6,6 @@ using System.Drawing.Drawing2D;
 using System.IO;
 using System.Windows.Forms;
 using System.Threading.Tasks;
-using Util;
 
 using Typography.OpenFont;
 using Typography.Contours;
@@ -216,24 +215,21 @@ namespace Test_WinForm_TessGlyph {
         private void DrawOutline(
             Graphics graphics, float[] polygon1, int[] contourEndIndices) {
             using (Pen pen1 = new Pen(Color.LightGray, 6)) {
-                int a = 0;
                 PointF p0;
                 PointF p1;
 
                 int contourCount = contourEndIndices.Length;
                 int startAt = 3;
-                for (int cnt_index = 0; cnt_index < contourCount; ++cnt_index) {
+                for (int cnt_index = 0, a = 0; cnt_index < contourCount; ++cnt_index) {
                     int endAt = contourEndIndices[cnt_index];
-                    for (int m = startAt; m <= endAt;) {
+                    for (int m = startAt; m <= endAt; m +=2, ++a) {
                         p0 = new PointF(polygon1[m - 3], polygon1[m - 2]);
                         p1 = new PointF(polygon1[m - 1], polygon1[m]);
                         graphics.DrawLine(pen1, p0, p1);
                         graphics.DrawString(a.ToString(), this.Font, Brushes.Black, p0);
-                        m += 2;
-                        a++;
                     }
-                    //close coutour 
 
+                    // close contour
                     p0 = new PointF(polygon1[endAt - 1], polygon1[endAt]);
                     p1 = new PointF(polygon1[startAt - 3], polygon1[startAt - 2]);
                     graphics.DrawLine(pen1, p0, p1);

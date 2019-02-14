@@ -679,9 +679,13 @@ namespace Typography.WebFont
                 float scale10 = 0;
                 float yscale = 1;
 
+#pragma warning disable CS0219 // Variable is assigned but its value is never used
                 bool useMatrix = false;
+#pragma warning restore CS0219 // Variable is assigned but its value is never used
                 //-----------------------------------------
+#pragma warning disable CS0219 // Variable is assigned but its value is never used
                 bool hasScale = false;
+#pragma warning restore CS0219 // Variable is assigned but its value is never used
                 if (Glyf.HasFlag(flags, Glyf.CompositeGlyphFlags.WE_HAVE_A_SCALE))
                 {
                     //If the bit WE_HAVE_A_SCALE is set,
